@@ -1,0 +1,17 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Enemies.cs">
+    <Files>
+      <File FileName="Assets\Scripts\Main.cs" Line="190" Column="28" />
+      <File FileName="Assets\Scripts\Enemies.cs" Line="29" Column="31" />
+      <File FileName="Assets\Scripts\UI.cs" Line="10" Column="2" />
+      <File FileName="Assets\Scripts\Bonus.cs" Line="21" Column="55" />
+      <File FileName="Assets\Scripts\ShipShoot.cs" Line="58" Column="16" />
+      <File FileName="Assets\Scripts\Particles.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
