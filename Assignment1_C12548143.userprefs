@@ -2,8 +2,9 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Main.cs">
     <Files>
-      <File FileName="Assets\Scripts\Main.cs" Line="10" Column="26" />
-      <File FileName="Assets\Scripts\Collisions.cs" Line="13" Column="15" />
+      <File FileName="Assets\Scripts\Main.cs" Line="255" Column="13" />
+      <File FileName="Assets\Scripts\Enemies.cs" Line="111" Column="44" />
+      <File FileName="Assets\Scripts\Ship.cs" Line="79" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

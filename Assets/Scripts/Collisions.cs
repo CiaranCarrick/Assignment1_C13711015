@@ -3,11 +3,12 @@ using System.Collections;
 
 public class Collisions : Main {
 
+
 	// Use this for initialization
 	void Start () {
 
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		//COLLISIONS
@@ -16,6 +17,7 @@ public class Collisions : Main {
 			if(target!=null){// Checks to avoid missingexception
 				Enemies enemy = target.GetComponent<Enemies>();// creates enemies instance that access referance that allows access to methods and variables within target
 				Color enemycolour=target.GetComponent<Renderer>().material.color;// referance colour
+				GameObject parts= target.transform.FindChild("p").gameObject; 
 				float distance=(transform.position- target.transform.position).magnitude;//creates a float which stores position between 2 variables
 				//Debug.Log (target); //check the distance between two vectors
 				if(distance <= 0.5f){
@@ -24,7 +26,11 @@ public class Collisions : Main {
 				}
 				//Score if killed
 				if(enemy.Health==0){
-					CreateParticles(transform.position, enemycolour, enemy.speed, 10); // Feed in particles spawn area, color and take in speed for effects
+					enemy.alive=false;
+					parts.transform.parent = null;//Breaks particles away from Enemy
+					parts.transform.parent=ParticleManager.transform;
+					parts.SetActive(true);
+					//enemy.CreateParticles(transform.position, enemycolour, enemy.speed, 20); // Feed in particles spawn area, color and take in speed for effects
 					EnemiesList.Remove(target.gameObject); //Remove enemy Gameobject from List, also avoids missingexception
 					
 					if(enemycolour==EnemyType[0]){

@@ -30,6 +30,7 @@ public class Stars : Main {
 		transform.Translate (transform.up * speed * Time.deltaTime);
 		if (transform.position.y <= -5f) {// Resets position once it reachs -1
 			pos.x = Random.Range(ScreenWidthLeft-xScale, ScreenWidthRight-xScale);//Adding Scale returns random float value as well as added size
+			speed=Random.Range(-3f, -40f);
 			pos.y = ScreenHeight;
 			transform.position=pos; //Save changes
 		}

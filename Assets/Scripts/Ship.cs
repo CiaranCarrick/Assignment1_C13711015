@@ -76,13 +76,14 @@ public class Ship : Main {
 	// Update is called once per frame
 	void Update () 
 	{
-		//MOVEMENT, Keep Movement script anyway
-		if (Input.GetAxis ("Horizontal") != 0) //This takes input for the ships X movement
-		{
-			transform.Translate(Vector3.right * Input.GetAxis("Horizontal")* speed);
-			Vector3 pos = transform.position;
-			pos.x=Mathf.Clamp(pos.x, (ScreenWidthLeft-xScale/2)+xScale, ScreenWidthRight-xScale/2); // Clamps its current pos (pos) from the min to max value set in this case -ScreenWidth to ScreenWidth
-			transform.position=pos; //Save transform change for effect
+		if (ship != null) {
+			//MOVEMENT, Keep Movement script anyway
+			if (Input.GetAxis ("Horizontal") != 0) { //This takes input for the ships X movement
+					transform.Translate (Vector3.right * Input.GetAxis ("Horizontal") * speed);
+					Vector3 pos = transform.position;
+					pos.x = Mathf.Clamp (pos.x, (ScreenWidthLeft - xScale / 2) + xScale, ScreenWidthRight - xScale / 2); // Clamps its current pos (pos) from the min to max value set in this case -ScreenWidth to ScreenWidth
+					transform.position = pos; //Save transform change for effect
+			}
 		}
 		//
 	}//end Update
