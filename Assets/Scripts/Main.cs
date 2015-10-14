@@ -11,6 +11,7 @@ public class Main : MonoBehaviour {
 	public static AudioSource explosionsound; //Accessed from ShipShoot
 	AudioClip bulletaudioclip;
 	AudioClip explosionaudioclip;
+	public static int enemyCount=0;
 
 	GameObject background; //2d Background image
 
@@ -22,7 +23,8 @@ public class Main : MonoBehaviour {
 	public float xPos,yPos,xScale,yScale,speed;//these will be used to contain values for each methods constructory
 	public Color color;//
 	public int Health;//
-
+	public int value;
+	public GameObject Target;
 	public float Enemyrotatespeed=40f;// Speed of lock on enemy rotation
 	public float Zangle;//For Enemies
 	public float Leveltime;
@@ -34,7 +36,7 @@ public class Main : MonoBehaviour {
 	public static int ScreenWidthRight = 8;
 	public int ScreenHeight = 20;
 
-	protected bool debugmode =false;
+	protected bool debugmode =true;
 
 	void Player(){
 
@@ -46,27 +48,30 @@ public class Main : MonoBehaviour {
 		myship.GetComponent<Ship> ().SetShip (0, -1, 1.0f, 1.0f, 0.5f, new Color (100, 0f, 255f, 1f));
 
 	}//End Player
-	
-	
+
 	void CreateEnemies(){
 		for (int i=1; i<=Level; i++) {
+
 			GameObject enemy = GameObject.CreatePrimitive (PrimitiveType.Quad);
+			if (enemy.activeInHierarchy==false) {
+				gameObject.SetActive(true);
+			}
+			else
 			enemy.AddComponent<Enemies> ();
 			//enemy.AddComponent<AudioSource>().clip=explosionaudioclip;
 			Enemies myenemies = enemy.GetComponent<Enemies> (); // Create Instance of Enemies called myenemies
-			myenemies.SetEnemies (0, 0, 1, 1, 0.1f, EnemyType[0], 1, Level, true);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level
+			myenemies.SetEnemies (0, 0, 1, 1, 0.1f, EnemyType [0], 1, Level, true, 10, ship);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level
 			enemy.GetComponent<Renderer> ().material.shader = Shader.Find ("Unlit/Color");// Removes light effect on texture"Assets/StarSkyBox"
-			LoadParticles(enemy.transform.position,enemy.GetComponent<Renderer>().material.color, myenemies.speed, 20, enemy.transform);
-			EnemiesList.Add (enemy);
 		}
 	}//End CreateEnemies
-	
-	void LoadParticles(Vector3 pos, Color _col, float _spd, int part_amount, Transform _parent){
+
+	//This method can only be accessed by inheriting classes, Used in derived class constructors to spawn particles
+	protected void LoadParticles(Vector3 pos, Color _col, float _spd, int part_amount, Transform _parent){
 		GameObject Eman = new GameObject ();// Contains all particles in a scene
 		Eman.name = "p";
 		Eman.AddComponent<CleanUp>();
 		Eman.transform.parent=_parent.transform;
-		for (int i= 0; i <= 9; i++) {
+		for (int i= 0; i <= part_amount; i++) {
 			GameObject particle = GameObject.CreatePrimitive (PrimitiveType.Quad);
 			particle.name = "BOOM";
 			particle.AddComponent<Particles> ();
@@ -163,17 +168,25 @@ public class Main : MonoBehaviour {
 		}
 	}
 
-	public void SubtractLife(GameObject _Tar) { //Method with GameObject, Parameter that decreses Health Variable, used in ShipShoot's update
-		//Debug.Log ("Start health" + Health);
-		Health--;
-		if (Health > 0) {
+	public void SubtractLife(Enemies _Tar) { //Method with GameObject, Parameter that decreses Health Variable, used in ShipShoot's update
+		_Tar.Health--;
+		//Debug.Log (name+" Health: " + Health);
+		if (_Tar.Health != 0) {
 			return;
-				} else
-			explosionsound.Play ();
-			_Tar.GetComponent<Renderer> ().enabled = false;
+		} else		
+		explosionsound.Play ();
+		ChangeScore (_Tar.value);
+		_Tar.GetComponent<Enemies> ().enabled = false;
+		_Tar.GetComponent<Renderer> ().enabled = false;
+		Invoke ("Respawn", Random.Range(3, 10));
 		//Debug.Log ("HIT " + Health);
 	}
 
+	void Respawn(){
+		print ("Respawn");
+		Destroy (this.gameObject);
+		CreateEnemies ();
+	}
 
 	void NextLevel() {
 		//Adjust Difficulty //Every new level, enemies will spawn quicker, regardless of player kills.
@@ -216,17 +229,13 @@ public class Main : MonoBehaviour {
 		ship = null;
 	}
 	
-	
-	public void ResetEnemies(){
-		if (transform.position.y <= -10f) {// Resets position once it reachs -1
-			if(gameObject.GetComponent<Enemies>().alive==false){
-				EnemiesList.Remove(gameObject);
-				Destroy(this.gameObject);
-			}
-			else{
-				Destroy(gameObject);
-			}
-
+	public void ResetEnemies(Enemies _tar){
+		if (transform.position.y <= -10f && _tar.alive==true) {// Resets position once it reachs -1
+			print ("clean");
+			xPos = Random.Range (ScreenWidthLeft+xScale, ScreenWidthRight);//Spawns objects in range of -8, 8 as ints
+			yPos = ScreenHeight + yScale;// Spawns above range of bullets
+			Vector3 pos = new Vector3 (Mathf.Round((xPos - xScale / 2)*10)/10, yPos, 0);// so to prevent spawning of screen the equation is My spawn areaa(pos)-half of the enemies widthx-xscale/2, then add its size again to keep it going 1 left and push it 1 right
+			transform.position = pos;
 		}
 	}
 	public void ChangeScore (int NewScore) // Add Score Method
@@ -258,12 +267,11 @@ public class Main : MonoBehaviour {
 		LoadShip (20);
 		CreateStars(10); //set _starCount amount here
 		ScoreM ();
-		InvokeRepeating ("CreateEnemies", 1f, EnemySpawnTime);
+		InvokeRepeating ("CreateEnemies", 1f, 3);
 	}//End Start
 	
 
 	void Update () {
-		//CreateEnemies ();
 		if (ship) //Ship must exist or not be null for bullets to be fired
 		{
 			if (cooldown>0)

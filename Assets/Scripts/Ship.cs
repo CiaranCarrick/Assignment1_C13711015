@@ -51,23 +51,25 @@ public class Ship : Main {
 	void TrusterParticles(){
 		//Right Thruster Particles
 		if (Rtruster != null || Ltruster != null) {
-			GameObject RT_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
-			GameObject LT_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
-			RT_Parts.name = "SParts";
-			LT_Parts.name = "SParts";
+			GameObject Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
+			Parts.name = "SParts";
 			Vector3 Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0); //Spawns Parts from left(xPos - xScale / 2) to right (xPos + xScale / 2) of ship going downwards
-			RT_Parts.AddComponent<Particles> ().SetupParticle (Rtruster.transform.position.x, Rtruster.transform.position.y, 0.06f, 0.06f, 0.04f, Direction, Color.white, 2f);
-			RT_Parts.transform.position=new Vector3(Rtruster.transform.position.x, Rtruster.transform.position.y, 0.1f);
+			Parts.AddComponent<Particles> ().SetupParticle (Rtruster.transform.position.x, Rtruster.transform.position.y, 0.06f, 0.06f, 0.04f, Direction, Color.white, 2f);
+			int a=(int)Random.Range(0,2);
+			if(a==1){
+			Parts.transform.position=new Vector3(Rtruster.transform.position.x, Rtruster.transform.position.y, 0.1f);
+			}
+			else{
+				Parts.transform.position=new Vector3(Ltruster.transform.position.x, Ltruster.transform.position.y, 0.1f);
+			}
 			//Left Thruster Particles
 			//Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0);
-			LT_Parts.AddComponent<Particles> ().SetupParticle (Ltruster.transform.position.x, Rtruster.transform.position.y, 0.06f, 0.06f, 0.04f, Direction, Color.white, 2f);
-			LT_Parts.transform.position=new Vector3(Ltruster.transform.position.x, Ltruster.transform.position.y, 0.1f);
 			if(ParticleManager){
-				LT_Parts.transform.parent = ParticleManager.transform;
-				RT_Parts.transform.parent = ParticleManager.transform;
+				Parts.transform.parent = ParticleManager.transform;
 			}
 		}
 	}
+
 	void Start ()
 	{
 		InvokeRepeating ("TrusterParticles", 0, 0.08f);//Create new particle
@@ -76,6 +78,7 @@ public class Ship : Main {
 	// Update is called once per frame
 	void Update () 
 	{
+
 		if (ship != null) {
 			//MOVEMENT, Keep Movement script anyway
 			if (Input.GetAxis ("Horizontal") != 0) { //This takes input for the ships X movement
