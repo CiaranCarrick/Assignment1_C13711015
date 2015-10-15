@@ -266,7 +266,7 @@ public class Main : MonoBehaviour {
 		mycooldown = 15;//Default bullet speed fire every 0.25 seconds
 		EnemySpawnTime = 2.00f;
 		Leveltime = 30;
-		Level =2;
+		Level =1;
 		score = 0;
 		Background ();
 		Player ();
@@ -285,7 +285,7 @@ public class Main : MonoBehaviour {
 			{
 				cooldown--;
 			}
-			if (ship)
+			if (Input.GetKey(KeyCode.Space)&& cooldown ==0)
 			{
 				FireBullets();
 				cooldown=mycooldown;

@@ -17,7 +17,7 @@ public class UI: Main{
 	void OnGUI(){
 		if(debugmode)
 		GUI.Label (new Rect (Screen.width/2-50, 45, 100, 50), "DEBUG MODE");
-		GUI.Label (new Rect (Screen.width - 40, Screen.height- 15, Screen.width, Screen.height), "ver.1.4");
+		GUI.Label (new Rect (Screen.width - 40, Screen.height- 15, Screen.width, Screen.height), "ver.1.5");
 		GUI.color = new Color (1, 1, 1, 0.8f);//80% Opacity
 		GUI.Label (new Rect (5, 5, 100, 50), "Score: " + score.ToString("000000"));
 		GUI.Label (new Rect (5, 25, 100, 50), "Time: " + main.Leveltime.ToString ("f1"));
