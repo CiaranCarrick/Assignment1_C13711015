@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Collisions : Main {
 
-
 	// Use this for initialization
 	void Start () {
 
@@ -20,10 +19,13 @@ public class Collisions : Main {
 				GameObject parts= target.transform.FindChild("p").gameObject; 
 				float distance=(transform.position- target.transform.position).magnitude;//creates a float which stores position between 2 variables
 				//print(target); //check the distance between two vectors
-				if(distance <= 0.5f && target!=null){// Checks to avoid missingexception
-					enemy.SubtractLife(target);//access enemy referance and use Subtract method to take HP away from target
+				if(distance <= 0.5f && gameObject.GetComponent<ShipShoot>().alive==true){// Checks to avoid missingexception
+					//print ("done");
 					gameObject.SetActive(false);//Disable gameObject aka bullet
+					gameObject.GetComponent<ShipShoot>().alive=false;//Disable the bullet
+					enemy.SubtractLife(target);//access enemy referance and use Subtract method to take HP away from target
 				}
+
 				//Score if killed
 				if(enemy.Health==0){
 					ChangeScore(enemy.pointvalue);

@@ -6,7 +6,6 @@ public class Main : MonoBehaviour {
 	public static List <GameObject> EnemiesList=new List<GameObject>();
 	public static int enemycount;
 	public List <GameObject> bullets;
-
 	AudioSource bulletsound;
 	public static AudioSource explosionsound; //Accessed from ShipShoot
 	AudioClip bulletaudioclip;
@@ -15,13 +14,15 @@ public class Main : MonoBehaviour {
 	GameObject background; //2d Background image
 
 	protected static GameObject ParticleManager;// Used to clean up Hierarchy
-	private GameObject StarManager;//Holds stars
+	protected GameObject EnemyManager;//
+	protected GameObject StarManager;//
 
 	private float EnemySpawnTime; // How long between each spawn.
 
 	public float xPos,yPos,xScale,yScale,speed;//these will be used to contain values for each methods constructory
 	public Color color;//
 	public int Health;//
+	public bool alive;
 
 	public float Enemyrotatespeed=40f;// Speed of lock on enemy rotation
 	public float Zangle;//For Enemies
@@ -54,9 +55,10 @@ public class Main : MonoBehaviour {
 			enemy.AddComponent<Enemies> ();
 			//enemy.AddComponent<AudioSource>().clip=explosionaudioclip;
 			Enemies myenemies = enemy.GetComponent<Enemies> (); // Create Instance of Enemies called myenemies
-			myenemies.SetEnemies (0, 0, 1, 1, 0.1f, EnemyType[0], 1,Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, particles
+			myenemies.SetEnemies (0, 0, 1, 1, 0.1f, 1,Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, particles
 			enemy.GetComponent<Renderer> ().material.shader = Shader.Find ("Unlit/Color");// Removes light effect on texture"Assets/StarSkyBox"
 			EnemiesList.Add (enemy);
+			enemy.transform.parent=EnemyManager.transform;
 		}
 	}//End CreateEnemies
 	
@@ -105,9 +107,10 @@ public class Main : MonoBehaviour {
 			GameObject bul = bullets[i].gameObject;
 			if(!bullets[i].activeInHierarchy)
 			{
+				bool alive=true;
 				float _xpos = ship.transform.position.x;// gives same position of ship
 				float _ypos = ship.transform.position.y;//sets bullet at tip of ship
-				bul.GetComponent<ShipShoot>().SetBullet(_xpos, _ypos, 0.2f, 0.3f, 0.4f, mycooldown); //float _x, float _y, float _xScale, float _yScale, float _speed
+				bul.GetComponent<ShipShoot>().SetBullet(_xpos, _ypos, 0.2f, 0.3f, 0.4f, mycooldown, alive); //float _x, float _y, float _xScale, float _yScale, float _speed
 				bullets[i].SetActive(true);
 				bulletsound.Play();
 				break;
@@ -164,7 +167,7 @@ public class Main : MonoBehaviour {
 	}
 
 	public void SubtractLife(GameObject _Tar) { //Method with GameObject, Parameter that decreses Health Variable, used in ShipShoot's update
-		Debug.Log ("HIT " + Health);
+		//Debug.Log ("HIT " + Health);
 		Health--;
 		if (Health > 0) {
 			return;
@@ -177,8 +180,8 @@ public class Main : MonoBehaviour {
 	
 	void Respawn(Enemies _Tar){
 		if (ship != null) {
-			print ("Respawn");
-			_Tar.SetEnemies (0, 0, 1, 1, 0.1f, EnemyType [0], 1, Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, pointsvalue
+			//print ("Respawn");
+			_Tar.SetEnemies (0, 0, 1, 1, 0.1f, 1, Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, pointsvalue
 		}
 	}
 
@@ -218,7 +221,7 @@ public class Main : MonoBehaviour {
 	public void killplayer(){
 		Destroy (ship.gameObject);
 		CreateParticles (transform.position, ship.GetComponent<Renderer>().material.color, speed, 100);
-		CancelInvoke("Createenemy");
+		CancelInvoke("CreateEnemies");
 	}
 	
 	public void GameOver(){
@@ -230,16 +233,11 @@ public class Main : MonoBehaviour {
 		if (transform.position.y <= -10f) {// Resets position once it reachs -1
 			if(gameObject.GetComponent<Enemies>().alive==false){
 				Respawn(_tar);
-				xPos = Random.Range (ScreenWidthLeft+xScale, ScreenWidthRight);//Spawns objects in range of -8, 8 as ints
-				yPos = ScreenHeight + yScale;// Spawns above range of bullets
-				Vector3 pos = new Vector3 (Mathf.Round((xPos - xScale / 2)*10)/10, yPos, 0);// so to prevent spawning of screen the equation is My spawn areaa(pos)-half of the enemies widthx-xscale/2, then add its size again to keep it going 1 left and push it 1 right
-				transform.position = pos;
+				_tar.Resetpos ();
+
 			}
 			else{
-				xPos = Random.Range (ScreenWidthLeft+xScale, ScreenWidthRight);//Spawns objects in range of -8, 8 as ints
-				yPos = ScreenHeight + yScale;// Spawns above range of bullets
-				Vector3 pos = new Vector3 (Mathf.Round((xPos - xScale / 2)*10)/10, yPos, 0);// so to prevent spawning of screen the equation is My spawn areaa(pos)-half of the enemies widthx-xscale/2, then add its size again to keep it going 1 left and push it 1 right
-				transform.position = pos;
+				_tar.Resetpos();
 			}
 
 		}
@@ -263,17 +261,20 @@ public class Main : MonoBehaviour {
 		StarManager.name="Stars";
 		ParticleManager = new GameObject ();// Contains all particles in a scene
 		ParticleManager.name="Particles";
+	    EnemyManager=new GameObject ();// Contains all enemies in a scene
+		EnemyManager.name = "EM";
+
 		mycooldown = 15;//Default bullet speed fire every 0.25 seconds
 		EnemySpawnTime = 2.00f;
 		Leveltime = 30;
-		Level =1;
+		Level =5;
 		score = 0;
 		Background ();
 		Player ();
 		LoadShip (20);
 		CreateStars(10); //set _starCount amount here
 		ScoreM ();
-		InvokeRepeating ("CreateEnemies", 1f, 1);
+		InvokeRepeating ("CreateEnemies", 1f, 20);
 	}//End Start
 	
 

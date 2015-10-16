@@ -4,13 +4,14 @@ using System.Collections;
 public class ShipShoot : Main {
 	
 
-	public void SetBullet(float _x, float _y, float _xScale, float _yScale, float _speed,int _mycooldown) { //Constructor which inherits values from Main ship method
+	public void SetBullet(float _x, float _y, float _xScale, float _yScale, float _speed,int _mycooldown, bool _alive) { //Constructor which inherits values from Main ship method
 		xPos = _x;
 		yPos = _y;
 		xScale = _xScale;
 		yScale = _yScale;
 		speed = _speed;
 		mycooldown = _mycooldown;
+		alive = _alive;
 
 		Vector3 pos = new Vector3 (xPos, yPos, 0.1f);
 		transform.position = pos;
@@ -29,6 +30,7 @@ public class ShipShoot : Main {
 		if ((transform.position.y) >= ScreenHeight) {//When bullets Y position is greater than ScreensHeight
 			gameObject.SetActive(false);//Disable gameObject aka bullet
 		}
+
 		if (mycooldown <=5){
 			transform.position += transform.right* Mathf.Sin (Time.time * 10) * 0.02f; //Awesome sine wave
 		}

@@ -3,17 +3,14 @@ using System.Collections;
 
 public class Enemies : Main {
 	bool Targetlocked;
-	public bool alive;
 	public int pointvalue;
 	public GameObject _Target; //ship referance
-	public void SetEnemies(float _x, float _y, float _xScale, float _yScale, float _speed, Color _color, int _health, int _level, bool _alive, int _pointvalue) {
-		name = "Enemy";
+	public void SetEnemies(float _x, float _y, float _xScale, float _yScale, float _speed, int _health, int _level, bool _alive, int _pointvalue) {
 		xPos = _x;
 		yPos = _y;
 		xScale = _xScale;
 		yScale = _yScale;
 		speed = _speed;
-		color = _color;
 		Health = _health;
 		Level = _level;
 		alive = _alive;
@@ -24,7 +21,7 @@ public class Enemies : Main {
 			GetComponent<Renderer>().material.color = EnemyType [0];//Spawn only reds in level 1
 		}
 		if (Level == 2) {
-			GetComponent<Renderer>().material.color = EnemyType [1]; //red and green
+			GetComponent<Renderer>().material.color = EnemyType [Random.Range (0, 2)]; //red and green
 		}
 		if (Level > 2) {
 			GetComponent<Renderer>().material.color = EnemyType [Random.Range (0, EnemyType.Length)];// red green and yellow
@@ -35,6 +32,7 @@ public class Enemies : Main {
 		//Regular
 		if (GetComponent<Renderer>().material.color == EnemyType [0]) {
 			name="Enemy_R";//Uses default varibles supplied in Createnemy in main
+			color=EnemyType[0];
 		}
 		if (GetComponent<Renderer>().material.color == EnemyType [1]) {
 			name="Enemy_G";
@@ -50,22 +48,25 @@ public class Enemies : Main {
 			pointvalue=25;
 			speed = Random.Range (0.13f, 0.15f);
 		}
-		GetComponent<Renderer> ().enabled = true;
+		GetComponent<Renderer> ().enabled = true;//Reset renderer after object is Respawned in Main class
 
+		Resetpos ();
 
-		xPos = Random.Range (ScreenWidthLeft+xScale, ScreenWidthRight);//Spawns objects in range of -8, 8 as ints
-		yPos = ScreenHeight + yScale;// Spawns above range of bullets
-		Vector3 pos = new Vector3 (Mathf.Round((xPos - xScale / 2)*10)/10, yPos, 0);// so to prevent spawning of screen the equation is My spawn areaa(pos)-half of the enemies widthx-xscale/2, then add its size again to keep it going 1 left and push it 1 right
 		LoadParticles(transform.position,color, speed,5,transform);//Once everything is set, create particles for each ship
-		transform.position = pos;
+
 		Vector3 scale = new Vector3(xScale, yScale, 0.1f);
 		transform.localScale = scale;
 		Targetlocked = false;
 		EnemiesList.Add (gameObject);
 
 	}
-	
-	
+
+	public void Resetpos(){
+		xPos = Random.Range (ScreenWidthLeft+xScale, ScreenWidthRight);//Spawns objects in range of -8, 8 as ints
+		yPos = ScreenHeight + yScale;// Spawns above range of bullets
+		Vector3 pos = new Vector3 (Mathf.Round((xPos - xScale / 2)*10)/10, yPos, 0);// so to prevent spawning of screen the equation is My spawn areaa(pos)-half of the enemies widthx-xscale/2, then add its size again to keep it going 1 left and push it 1 right
+		transform.position = pos;
+	}
 	
 	public void Findplayer() {
 		if (alive==true) {
