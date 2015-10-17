@@ -39,14 +39,14 @@ public class Enemies : Main {
 			Health = 3;
 			color=EnemyType[1];
 			pointvalue=25;
-			speed = Random.Range (0.11f, 0.15f);
+			speed= Random.Range (0.08f, 0.08f);
 		}
 		//Lock on
 		if (GetComponent<Renderer>().material.color == EnemyType [2]) {
 			name="Enemy_Y";
 			color=EnemyType[2];
 			pointvalue=25;
-			speed = Random.Range (0.13f, 0.15f);
+			speed = Random.Range (0.08f, 0.14f);
 		}
 		GetComponent<Renderer> ().enabled = true;//Reset renderer after object is Respawned in Main class
 
@@ -117,13 +117,15 @@ public class Enemies : Main {
 			print("stap");
 			CancelInvoke ("CreateEnemies");
 		}
+
 	}
 
 	
 	
 	// Update is called once per frame
 	void Update () {
-		transform.Translate (Vector3.down * speed);
+
+		transform.Translate (-transform.up * speed);
 		ResetEnemies (gameObject.GetComponent<Enemies>());
 		//Enemy Updates
 		if (debugmode!=true)

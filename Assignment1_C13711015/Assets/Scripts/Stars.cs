@@ -28,9 +28,9 @@ public class Stars : Main {
 	// Update is called once per frame
 	void Update () {
 		transform.Translate (transform.up * speed * Time.deltaTime);
-		if (transform.position.y <= -5f) {// Resets position once it reachs -1
+		if (transform.position.y <= -10f) {// Resets position once it reachs -1
 			pos.x = Random.Range(ScreenWidthLeft-xScale, ScreenWidthRight-xScale);//Adding Scale returns random float value as well as added size
-			speed=Random.Range(-3f, -40f);
+			speed=Random.Range(-20f, -50f);
 			pos.y = ScreenHeight;
 			transform.position=pos; //Save changes
 		}

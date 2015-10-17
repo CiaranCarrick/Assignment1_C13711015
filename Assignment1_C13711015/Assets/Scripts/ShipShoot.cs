@@ -26,7 +26,7 @@ public class ShipShoot : Main {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.Translate (transform.up * speed);
+		transform.Translate (Vector3.up* speed);
 		if ((transform.position.y) >= ScreenHeight) {//When bullets Y position is greater than ScreensHeight
 			gameObject.SetActive(false);//Disable gameObject aka bullet
 		}

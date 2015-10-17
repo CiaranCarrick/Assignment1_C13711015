@@ -5,7 +5,7 @@ public class Main : MonoBehaviour {
 	public Color[] EnemyType= {Color.red, Color.green, Color.yellow};// Enemy types(Colors) stored in array
 	public static List <GameObject> EnemiesList=new List<GameObject>();
 	public static int enemycount;
-	public List <GameObject> bullets;
+	public static List <GameObject> bullets;
 	AudioSource bulletsound;
 	public static AudioSource explosionsound; //Accessed from ShipShoot
 	AudioClip bulletaudioclip;
@@ -35,7 +35,7 @@ public class Main : MonoBehaviour {
 	public static int ScreenWidthRight = 8;
 	public int ScreenHeight = 20;
 
-	protected bool debugmode =true;
+	protected bool debugmode =false;
 
 	void Player(){
 
@@ -61,7 +61,6 @@ public class Main : MonoBehaviour {
 			enemy.transform.parent=EnemyManager.transform;
 		}
 	}//End CreateEnemies
-	
 	//This method can only be accessed by inheriting classes, Used in derived class constructors to spawn particles
 	protected void LoadParticles(Vector3 pos, Color _col, float _spd, int part_amount, Transform _parent){
 		GameObject Eman = new GameObject ();// Contains all particles in a scene
@@ -90,7 +89,7 @@ public class Main : MonoBehaviour {
 
 	public void LoadShip(int _bullets){
 		GameObject Clip = new GameObject();//Clean up hierachy 
-		Clip.name = "Clip";//Name empty Gameobject
+		Clip.name = "GameClip";//Name empty Gameobject
 		bullets=new List<GameObject>();//intialize bulllets list
 		for (int i =1; i<=_bullets; i++) {
 			GameObject bullet = GameObject.CreatePrimitive (PrimitiveType.Quad);
@@ -102,14 +101,14 @@ public class Main : MonoBehaviour {
 			bullet.transform.parent = Clip.transform; //Makes LTruster a child to Ship
 		}
 	}//End CreateBullets
-	public void FireBullets(){
+	public void FireBullets(Transform _T){
 		for (int i =0; i<bullets.Count; i++) {
 			GameObject bul = bullets[i].gameObject;
 			if(!bullets[i].activeInHierarchy)
 			{
 				bool alive=true;
-				float _xpos = ship.transform.position.x;// gives same position of ship
-				float _ypos = ship.transform.position.y;//sets bullet at tip of ship
+				float _xpos = _T.transform.position.x;// gives same position of ship
+				float _ypos = _T.transform.position.y;//sets bullet at tip of ship
 				bul.GetComponent<ShipShoot>().SetBullet(_xpos, _ypos, 0.2f, 0.3f, 0.4f, mycooldown, alive); //float _x, float _y, float _xScale, float _yScale, float _speed
 				bullets[i].SetActive(true);
 				bulletsound.Play();
@@ -125,7 +124,7 @@ public class Main : MonoBehaviour {
 			stars.GetComponent<Collider>().enabled = false; 
 			stars.AddComponent<Stars>();
 			Stars sstars=stars.GetComponent<Stars>();
-			sstars.SetStars(0, 0, 0.05f, 1.0f,Random.Range(-3f, -40f));
+			sstars.SetStars(0, 0, 0.03f, 1.0f,Random.Range(-20f, -50f));
 			stars.transform.parent=StarManager.transform;
 		}
 	}//End CreateStars
@@ -180,7 +179,7 @@ public class Main : MonoBehaviour {
 	
 	void Respawn(Enemies _Tar){
 		if (ship != null) {
-			//print ("Respawn");
+			print ("Yes Respawn");
 			_Tar.SetEnemies (0, 0, 1, 1, 0.1f, 1, Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, pointsvalue
 		}
 	}
@@ -190,7 +189,7 @@ public class Main : MonoBehaviour {
 		//Adjust Difficulty //Every new level, enemies will spawn quicker, regardless of player kills.
 		//Refresh Invoke
 		CancelInvoke ("CreateEnemies");
-		if (EnemySpawnTime != 0.50f) {
+		if (EnemySpawnTime != 1f) {
 			EnemySpawnTime -= 0.25f; //Decrease EnemySpawnTime
 		}
 		InvokeRepeating ("CreateEnemies", 1f, EnemySpawnTime); //Re-intialize Invoke with new EnemySpawnTime value
@@ -265,16 +264,16 @@ public class Main : MonoBehaviour {
 		EnemyManager.name = "EM";
 
 		mycooldown = 15;//Default bullet speed fire every 0.25 seconds
-		EnemySpawnTime = 2.00f;
+		EnemySpawnTime = 4.00f;
 		Leveltime = 30;
-		Level =5;
+		Level =1;
 		score = 0;
 		Background ();
 		Player ();
 		LoadShip (20);
 		CreateStars(10); //set _starCount amount here
 		ScoreM ();
-		InvokeRepeating ("CreateEnemies", 1f, 20);
+		InvokeRepeating ("CreateEnemies", 1f, EnemySpawnTime);
 	}//End Start
 	
 
@@ -288,7 +287,7 @@ public class Main : MonoBehaviour {
 			}
 			if (Input.GetKey(KeyCode.Space)&& cooldown ==0)
 			{
-				FireBullets();
+				FireBullets(ship.transform);
 				cooldown=mycooldown;
 				if (mycooldown<=3)
 					mycooldown=3; //max speed of bullets after all bonus' are picked up

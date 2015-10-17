@@ -56,11 +56,11 @@ public class Ship : Main {
 			RT_Parts.name = "SParts";
 			LT_Parts.name = "SParts";
 			Vector3 Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0); //Spawns Parts from left(xPos - xScale / 2) to right (xPos + xScale / 2) of ship going downwards
-			RT_Parts.AddComponent<Particles> ().SetupParticle (Rtruster.transform.position.x, Rtruster.transform.position.y, 0.06f, 0.06f, 0.04f, Direction, Color.white, 2f);
+			RT_Parts.AddComponent<Particles> ().SetupParticle (Rtruster.transform.position.x, Rtruster.transform.position.y, 0.06f, 0.06f, 0.08f, Direction, Color.white, 1f);
 			RT_Parts.transform.position=new Vector3(Rtruster.transform.position.x, Rtruster.transform.position.y, 0.1f);
 			//Left Thruster Particles
 			//Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0);
-			LT_Parts.AddComponent<Particles> ().SetupParticle (Ltruster.transform.position.x, Rtruster.transform.position.y, 0.06f, 0.06f, 0.04f, Direction, Color.white, 2f);
+			LT_Parts.AddComponent<Particles> ().SetupParticle (Ltruster.transform.position.x, Rtruster.transform.position.y, 0.06f, 0.06f, 0.08f, Direction, Color.white, 1f);
 			LT_Parts.transform.position=new Vector3(Ltruster.transform.position.x, Ltruster.transform.position.y, 0.1f);
 			if(ParticleManager){
 				LT_Parts.transform.parent = ParticleManager.transform;
@@ -72,10 +72,13 @@ public class Ship : Main {
 	{
 		InvokeRepeating ("TrusterParticles", 0, 0.08f);//Create new particle
 	}
-	
+	float lerpTime = 5f;//
+	float currentLerpTime;
 	// Update is called once per frame
 	void Update () 
 	{
+		//lerp!
+		float perc = currentLerpTime / lerpTime;//This will return the value to it's orignal avoiding the nuance of lerp leaving numbers off by 0.000001 
 		if (ship != null) {
 			//MOVEMENT, Keep Movement script anyway
 			if (Input.GetAxis ("Horizontal") != 0) { //This takes input for the ships X movement
@@ -84,6 +87,17 @@ public class Ship : Main {
 					pos.x = Mathf.Clamp (pos.x, (ScreenWidthLeft - xScale / 2) + xScale, ScreenWidthRight - xScale / 2); // Clamps its current pos (pos) from the min to max value set in this case -ScreenWidth to ScreenWidth
 					transform.position = pos; //Save transform change for effect
 			}
+			if(Input.GetKey(KeyCode.Space))
+			{
+				speed=0.35f;
+				currentLerpTime = 0f;//Reset to 0
+			}
+			else
+				currentLerpTime += Time.deltaTime;//Start incrementing value over time
+			if (currentLerpTime > lerpTime) {
+				currentLerpTime = lerpTime;
+			}
+			speed = Mathf.Lerp (speed, 0.5f, perc);//from the current speed up to original, by perc aka currentLerpTime / lerpTime
 		}
 		//
 	}//end Update
