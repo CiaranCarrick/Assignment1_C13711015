@@ -95,7 +95,7 @@ public class Main : MonoBehaviour {
 			GameObject bullet = GameObject.CreatePrimitive (PrimitiveType.Quad);
 			bullet.name = "Bullet";
 			bullet.AddComponent<ShipShoot> ();//Add script to each bullet
-			bullet.AddComponent<Collisions> ();//
+			//bullet.AddComponent<Collisions> ();//
 			bullet.SetActive(false);
 			bullets.Add (bullet);//Add gameobject to list
 			bullet.transform.parent = Clip.transform; //Makes LTruster a child to Ship
@@ -109,9 +109,10 @@ public class Main : MonoBehaviour {
 				bool alive=true;
 				float _xpos = _T.transform.position.x;// gives same position of ship
 				float _ypos = _T.transform.position.y;//sets bullet at tip of ship
-				bul.GetComponent<ShipShoot>().SetBullet(_xpos, _ypos, 0.2f, 0.3f, 0.4f, mycooldown, alive); //float _x, float _y, float _xScale, float _yScale, float _speed
+				float _Zrot = _T.transform.eulerAngles.z;
+				bul.GetComponent<ShipShoot>().SetBullet(_xpos, _ypos, _Zrot, 0.2f, 0.3f, 0.4f, mycooldown, alive, transform.up); //float _x, float _y, float _xScale, float _yScale, float _speed
 				bullets[i].SetActive(true);
-				bulletsound.Play();
+				//bulletsound.Play();
 				break;
 			}
 
@@ -262,11 +263,10 @@ public class Main : MonoBehaviour {
 		ParticleManager.name="Particles";
 	    EnemyManager=new GameObject ();// Contains all enemies in a scene
 		EnemyManager.name = "EM";
-
 		mycooldown = 15;//Default bullet speed fire every 0.25 seconds
 		EnemySpawnTime = 4.00f;
 		Leveltime = 30;
-		Level =1;
+		Level =3;
 		score = 0;
 		Background ();
 		Player ();
@@ -287,7 +287,7 @@ public class Main : MonoBehaviour {
 			}
 			if (Input.GetKey(KeyCode.Space)&& cooldown ==0)
 			{
-				FireBullets(ship.transform);
+				FireBullets (ship.transform);
 				cooldown=mycooldown;
 				if (mycooldown<=3)
 					mycooldown=3; //max speed of bullets after all bonus' are picked up

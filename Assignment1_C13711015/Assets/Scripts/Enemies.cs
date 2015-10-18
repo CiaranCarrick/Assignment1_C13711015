@@ -15,8 +15,7 @@ public class Enemies : Main {
 		Level = _level;
 		alive = _alive;
 		pointvalue = _pointvalue;
-		
-		transform.localRotation = Quaternion.identity;//Reset rotation
+
 		if (Level <= 1 ) {
 			GetComponent<Renderer>().material.color = EnemyType [0];//Spawn only reds in level 1
 		}
@@ -65,6 +64,7 @@ public class Enemies : Main {
 		xPos = Random.Range (ScreenWidthLeft+xScale, ScreenWidthRight);//Spawns objects in range of -8, 8 as ints
 		yPos = ScreenHeight + yScale;// Spawns above range of bullets
 		Vector3 pos = new Vector3 (Mathf.Round((xPos - xScale / 2)*10)/10, yPos, 0);// so to prevent spawning of screen the equation is My spawn areaa(pos)-half of the enemies widthx-xscale/2, then add its size again to keep it going 1 left and push it 1 right
+		transform.eulerAngles = new Vector3 (0, 0, 180f);
 		transform.position = pos;
 	}
 	
@@ -83,49 +83,42 @@ public class Enemies : Main {
 				if (_Target != null) {//Once Target is found, execute below
 					float distance = (transform.position - _Target.transform.position).magnitude;//creates a float which stores position between A & B
 					if (distance <= 1f)//If less than 1f..
-					killplayer();//Activate GameOver method
+						killplayer();//Activate GameOver method
 				}
 				//HOMING ENEMIES
-				if (GetComponent<Renderer> ().material.color == EnemyType [2]) {
+				if (GetComponent<Renderer>().material.color == EnemyType [2] && this.gameObject.transform.position.y >= yScale/2){//If enemy is of type yellow, call lock on method and target enemy if its centre position is equal to half the players height
 					Targetlocked = true;
 					if (Targetlocked == true) {
 						Vector3 Dir = _Target.transform.position - transform.position;// Get a direction Vector from Target to enemy
 						Dir.Normalize ();// Normalize it so that it's a unit direction Vector, gives it a size of 1
 						
 						//ROTATE Enemy ship towards player
-						Zangle = Mathf.Atan2 (Dir.y, Dir.x) * Mathf.Rad2Deg + 90; // Draws an angle facing the players position
+						Zangle = Mathf.Atan2 (Dir.y, Dir.x) * Mathf.Rad2Deg - 90; // Draws an angle facing the players position
 						Quaternion AngleRotation = Quaternion.Euler (0, 0, Zangle);// Which axis the rotation will take place, in this case the X-Axis
 						transform.rotation = Quaternion.RotateTowards (transform.rotation, AngleRotation, Enemyrotatespeed * Time.deltaTime); //How fast enemy rotates towards player
-						if (this.gameObject.transform.position.y <= yScale / 2) { 
-							Targetlocked = false;//Sends enemy downwards when its centre position is equal to half the players height
-						}//end this if
+
 					}//end targetlocked if
 				}//end enemytype2 if
+				else
+					Targetlocked = false;//Sends enemy downwards when its centre position is equal to half the players height
 			} 
-		}
+		}//end alive if
 		else
 			return;
 	}//end FindPlayer
 	
 	
-	
-	
 	// Use this for initialization
 	void Start () {
-		enemycount++;
-		if(enemycount==10){
-			print("stap");
-			CancelInvoke ("CreateEnemies");
-		}
-
 	}
 
-	
-	
 	// Update is called once per frame
 	void Update () {
-
-		transform.Translate (-transform.up * speed);
+//		if (Input.GetKey (KeyCode.Space) && cooldown == 0) {
+//			LoadShip (1);
+//			FireBullets (this.transform);
+//		}
+		transform.Translate (Vector3.up * speed);
 		ResetEnemies (gameObject.GetComponent<Enemies>());
 		//Enemy Updates
 		if (debugmode!=true)
