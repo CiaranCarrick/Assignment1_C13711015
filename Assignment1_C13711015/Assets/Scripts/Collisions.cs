@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Collisions : Main {
 	ShipShoot bullet;
+	GameObject target;
 	// Use this for initialization
 	void Start () {
 		bullet = gameObject.GetComponent<ShipShoot> ();
@@ -11,7 +12,7 @@ public class Collisions : Main {
 	void Update () {
 		//COLLISIONS
 		for(int i=0; i < EnemiesList.Count; i++){
-			GameObject target = EnemiesList[i].gameObject;
+			target = EnemiesList[i].gameObject;
 			if(target!=null){// Checks to avoid missingexception
 				Enemies enemy = target.GetComponent<Enemies>();// creates enemies instance that access referance that allows access to methods and variables within target
 				float distance=(transform.position- target.transform.position).magnitude;//creates a float which stores position between 2 variables

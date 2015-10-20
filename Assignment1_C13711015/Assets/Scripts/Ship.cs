@@ -48,8 +48,9 @@ public class Ship : Main {
 	}
 
 
-	void TrusterParticles(){
+	IEnumerator ThrusterParticles(){
 		//Right Thruster Particles
+		while(ship) {
 		if (Rtruster != null || Ltruster != null) {
 			GameObject RT_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
 			GameObject LT_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
@@ -65,13 +66,17 @@ public class Ship : Main {
 			if(ParticleManager){
 				LT_Parts.transform.parent = ParticleManager.transform;
 				RT_Parts.transform.parent = ParticleManager.transform;
+				}
 			}
+			yield return new WaitForSeconds(0.03f);
 		}
 	}
 	void Start ()
 	{
-		InvokeRepeating ("TrusterParticles", 0, 0.08f);//Create new particle
+		StartCoroutine(ThrusterParticles());
+
 	}
+
 	float lerpTime = 5f;//
 	float currentLerpTime;
 	// Update is called once per frame
@@ -99,6 +104,10 @@ public class Ship : Main {
 			}
 			speed = Mathf.Lerp (speed, 0.5f, perc);//from the current speed up to original, by perc aka currentLerpTime / lerpTime
 		}
+		if (ship == null) {
+			gameObject.transform.Translate (transform.up * speed/2);//called on GameOver
+		}
+
 		//
 	}//end Update
 }// end class

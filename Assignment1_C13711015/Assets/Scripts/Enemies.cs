@@ -101,6 +101,7 @@ public class Enemies : Main {
 				}//end enemytype2 if
 				else
 					Targetlocked = false;//Sends enemy downwards when its centre position is equal to half the players height
+					return;
 			} 
 		}//end alive if
 		else
@@ -110,14 +111,15 @@ public class Enemies : Main {
 	
 	// Use this for initialization
 	void Start () {
+		InvokeRepeating ("shoot", 1, 10);
 	}
-
+	void shoot(){
+		if(color==EnemyType[0] && alive==true)
+		FireBullets (this.transform, 0.08f, false);
+	}
+	
 	// Update is called once per frame
 	void Update () {
-//		if (Input.GetKey (KeyCode.Space) && cooldown == 0) {
-//			LoadShip (1);
-//			FireBullets (this.transform);
-//		}
 		transform.Translate (Vector3.up * speed);
 		ResetEnemies (gameObject.GetComponent<Enemies>());
 		//Enemy Updates

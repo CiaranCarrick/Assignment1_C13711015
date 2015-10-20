@@ -22,7 +22,7 @@ public class Main : MonoBehaviour {
 	public float xPos,yPos,xScale,yScale,speed;//these will be used to contain values for each methods constructory
 	public Color color;//
 	public int Health;//
-	public bool alive;
+	public bool alive, gameover;
 
 	public float Enemyrotatespeed=40f;// Speed of lock on enemy rotation
 	public float Zangle;//For Enemies
@@ -55,7 +55,7 @@ public class Main : MonoBehaviour {
 			enemy.AddComponent<Enemies> ();
 			//enemy.AddComponent<AudioSource>().clip=explosionaudioclip;
 			Enemies myenemies = enemy.GetComponent<Enemies> (); // Create Instance of Enemies called myenemies
-			myenemies.SetEnemies (0, 0, 1, 1, 0.1f, 1,Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, particles
+			myenemies.SetEnemies (0, 0, 1, 1, 0.06f,1,Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, particles
 			enemy.GetComponent<Renderer> ().material.shader = Shader.Find ("Unlit/Color");// Removes light effect on texture"Assets/StarSkyBox"
 			EnemiesList.Add (enemy);
 			enemy.transform.parent=EnemyManager.transform;
@@ -94,14 +94,15 @@ public class Main : MonoBehaviour {
 		for (int i =1; i<=_bullets; i++) {
 			GameObject bullet = GameObject.CreatePrimitive (PrimitiveType.Quad);
 			bullet.name = "Bullet";
+			//bullet.AddComponent<Collisions>();
 			bullet.AddComponent<ShipShoot> ();//Add script to each bullet
-			//bullet.AddComponent<Collisions> ();//
 			bullet.SetActive(false);
 			bullets.Add (bullet);//Add gameobject to list
 			bullet.transform.parent = Clip.transform; //Makes LTruster a child to Ship
 		}
 	}//End CreateBullets
-	public void FireBullets(Transform _T){
+
+	public void FireBullets(Transform _T, float _speed, bool _bonus){
 		for (int i =0; i<bullets.Count; i++) {
 			GameObject bul = bullets[i].gameObject;
 			if(!bullets[i].activeInHierarchy)
@@ -110,13 +111,12 @@ public class Main : MonoBehaviour {
 				float _xpos = _T.transform.position.x;// gives same position of ship
 				float _ypos = _T.transform.position.y;//sets bullet at tip of ship
 				float _Zrot = _T.transform.eulerAngles.z;
-				bul.GetComponent<ShipShoot>().SetBullet(_xpos, _ypos, _Zrot, 0.2f, 0.3f, 0.4f, mycooldown, alive, transform.up); //float _x, float _y, float _xScale, float _yScale, float _speed
+				bul.GetComponent<ShipShoot>().SetBullet(_xpos, _ypos, _Zrot, 0.2f, 0.3f, _speed, mycooldown, alive, Vector3.up, _bonus); //float _x, float _y, float _xScale, float _yScale, float _speed
 				bullets[i].SetActive(true);
 				//bulletsound.Play();
 				break;
+				}
 			}
-
-		}
 	}//End CreateBullets
 	
 	void CreateStars(int _starCount){ //Takes in starCount from field above
@@ -219,8 +219,8 @@ public class Main : MonoBehaviour {
 		CreateParticles(Party, new Color(Random.Range(0.1f, 1f),Random.Range(0.1f, 1f),Random.Range(0.1f, 1f),0), 0.1f, 30); // Shoot randomly coloured particles around
 	}
 	public void killplayer(){
+		CreateParticles (transform.position, ship.GetComponent<Renderer>().material.color, 0.08f, 100);
 		Destroy (ship.gameObject);
-		CreateParticles (transform.position, ship.GetComponent<Renderer>().material.color, speed, 100);
 		CancelInvoke("CreateEnemies");
 	}
 	
@@ -266,7 +266,7 @@ public class Main : MonoBehaviour {
 		mycooldown = 15;//Default bullet speed fire every 0.25 seconds
 		EnemySpawnTime = 4.00f;
 		Leveltime = 30;
-		Level =3;
+		Level = 1;
 		score = 0;
 		Background ();
 		Player ();
@@ -287,7 +287,7 @@ public class Main : MonoBehaviour {
 			}
 			if (Input.GetKey(KeyCode.Space)&& cooldown ==0)
 			{
-				FireBullets (ship.transform);
+				FireBullets(ship.transform, 0.4f, true);
 				cooldown=mycooldown;
 				if (mycooldown<=3)
 					mycooldown=3; //max speed of bullets after all bonus' are picked up
@@ -304,6 +304,7 @@ public class Main : MonoBehaviour {
 				}
 			}//end Debug
 		}//end ship
+
 	}//End Update
 
 }//End Main Class
