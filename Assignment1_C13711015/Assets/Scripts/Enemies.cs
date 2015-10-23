@@ -31,6 +31,7 @@ public class Enemies : Main {
 		//Regular
 		if (GetComponent<Renderer>().material.color == EnemyType [0]) {
 			name="Enemy_R";//Uses default varibles supplied in Createnemy in main
+			speed=0.06f;
 			color=EnemyType[0];
 		}
 		if (GetComponent<Renderer>().material.color == EnemyType [1]) {
@@ -57,7 +58,6 @@ public class Enemies : Main {
 		transform.localScale = scale;
 		Targetlocked = false;
 		EnemiesList.Add (gameObject);
-
 	}
 
 	public void Resetpos(){
@@ -111,11 +111,11 @@ public class Enemies : Main {
 	
 	// Use this for initialization
 	void Start () {
-		InvokeRepeating ("shoot", 1, 10);
+		InvokeRepeating ("shoot", Random.Range(1,3), 8);
 	}
 	void shoot(){
-		if(color==EnemyType[0] && alive==true)
-		FireBullets (this.transform, 0.08f, false);
+		if(color==EnemyType[0] && alive==true && ship)
+		FireBullets (this.transform, (speed*Random.Range(1.25f, 2f)), false);
 	}
 	
 	// Update is called once per frame

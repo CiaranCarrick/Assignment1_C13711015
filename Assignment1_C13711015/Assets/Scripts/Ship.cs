@@ -48,9 +48,9 @@ public class Ship : Main {
 	}
 
 
-	IEnumerator ThrusterParticles(){
+	 IEnumerator ThrusterParticles(float time){
 		//Right Thruster Particles
-		while(ship) {
+		while(gameObject) {
 		if (Rtruster != null || Ltruster != null) {
 			GameObject RT_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
 			GameObject LT_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
@@ -68,12 +68,12 @@ public class Ship : Main {
 				RT_Parts.transform.parent = ParticleManager.transform;
 				}
 			}
-			yield return new WaitForSeconds(0.03f);
+			yield return new WaitForSeconds(time);
 		}
 	}
 	void Start ()
 	{
-		StartCoroutine(ThrusterParticles());
+		StartCoroutine(ThrusterParticles(0.03f));
 
 	}
 

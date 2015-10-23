@@ -16,7 +16,7 @@ public class Stars : Main {
 		yPos = Random.Range(0, ScreenHeight);
 		pos= new Vector3((xPos)+xScale/2, yPos,Random.Range(0, 2)); // Z spawns stars above and below ships for visual effect
 		transform.position = pos;
-		Vector3 scale = new Vector3(xScale, Random.Range(0.2f, 1.0f), 0.1f);
+		Vector3 scale = new Vector3(xScale, Random.Range(0.3f, 2f), 0.1f);
 		transform.localScale = scale;
 	}
 

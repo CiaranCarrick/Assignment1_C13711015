@@ -90,10 +90,11 @@ public class ShipShoot : Main {
 				killplayer ();
 			}
 		}
-//
-//		if (mycooldown <=5){
-//			transform.position += transform.right* Mathf.Sin (Time.time * 10) * 0.02f; //Awesome sine wave
-//		}
+		if(bonus){//If Ship shoots the bullet
+			if (mycooldown <= 5) {
+				transform.position += transform.right * Mathf.Sin (Time.time * 10) * 0.02f; //Awesome sine wave
+			}
+		}
 		//COLLISIONS
 	}//end update
 }
