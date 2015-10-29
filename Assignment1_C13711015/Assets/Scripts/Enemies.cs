@@ -2,9 +2,9 @@
 using System.Collections;
 
 public class Enemies : Main {
-	bool Targetlocked;
 	public int pointvalue;
-	public GameObject _Target; //ship referance
+	float timer;
+	public Renderer rend;//Refernace to color
 	public void SetEnemies(float _x, float _y, float _xScale, float _yScale, float _speed, int _health, int _level, bool _alive, int _pointvalue) {
 		xPos = _x;
 		yPos = _y;
@@ -15,7 +15,7 @@ public class Enemies : Main {
 		Level = _level;
 		alive = _alive;
 		pointvalue = _pointvalue;
-
+		
 		if (Level <= 1 ) {
 			GetComponent<Renderer>().material.color = EnemyType [0];//Spawn only reds in level 1
 		}
@@ -49,17 +49,16 @@ public class Enemies : Main {
 			speed = Random.Range (0.08f, 0.14f);
 		}
 		GetComponent<Renderer> ().enabled = true;//Reset renderer after object is Respawned in Main class
-
+		
 		Resetpos ();
-
+		
 		LoadParticles(transform.position,color, speed,5,transform);//Once everything is set, create particles for each ship
-
+		
 		Vector3 scale = new Vector3(xScale, yScale, 0.1f);
 		transform.localScale = scale;
-		Targetlocked = false;
 		EnemiesList.Add (gameObject);
 	}
-
+	
 	public void Resetpos(){
 		xPos = Random.Range (ScreenWidthLeft+xScale, ScreenWidthRight);//Spawns objects in range of -8, 8 as ints
 		yPos = ScreenHeight + yScale;// Spawns above range of bullets
@@ -87,8 +86,6 @@ public class Enemies : Main {
 				}
 				//HOMING ENEMIES
 				if (GetComponent<Renderer>().material.color == EnemyType [2] && this.gameObject.transform.position.y >= yScale/2){//If enemy is of type yellow, call lock on method and target enemy if its centre position is equal to half the players height
-					Targetlocked = true;
-					if (Targetlocked == true) {
 						Vector3 Dir = _Target.transform.position - transform.position;// Get a direction Vector from Target to enemy
 						Dir.Normalize ();// Normalize it so that it's a unit direction Vector, gives it a size of 1
 						
@@ -96,11 +93,9 @@ public class Enemies : Main {
 						Zangle = Mathf.Atan2 (Dir.y, Dir.x) * Mathf.Rad2Deg - 90; // Draws an angle facing the players position
 						Quaternion AngleRotation = Quaternion.Euler (0, 0, Zangle);// Which axis the rotation will take place, in this case the X-Axis
 						transform.rotation = Quaternion.RotateTowards (transform.rotation, AngleRotation, Enemyrotatespeed * Time.deltaTime); //How fast enemy rotates towards player
-
-					}//end targetlocked if
+						
 				}//end enemytype2 if
 				else
-					Targetlocked = false;//Sends enemy downwards when its centre position is equal to half the players height
 					return;
 			} 
 		}//end alive if
@@ -108,18 +103,30 @@ public class Enemies : Main {
 			return;
 	}//end FindPlayer
 	
-	
 	// Use this for initialization
 	void Start () {
+		rend = GetComponent<Renderer> ();
 		InvokeRepeating ("shoot", Random.Range(1,3), 8);
 	}
 	void shoot(){
 		if(color==EnemyType[0] && alive==true && ship)
-		FireBullets (this.transform, (speed*Random.Range(1.25f, 2f)), false);
+			FireBullets (this.transform, (speed*Random.Range(1.25f, 2f)), false);
 	}
-	
+
+	void Damageindicater(){
+		timer += Time.deltaTime;
+		if(timer>=0.05f){
+			rend.material.color = color;
+			timer=0;
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
+		if (rend.material.color == Color.red) {
+			Damageindicater();
+		}
+
 		transform.Translate (Vector3.up * speed);
 		ResetEnemies (gameObject.GetComponent<Enemies>());
 		//Enemy Updates

@@ -2,9 +2,8 @@
 using System.Collections;
 
 public class Ship : Main {
-	GameObject Rtruster;// Create trusters outside of constructor to allow scope for TrusterParticles Method
-	GameObject Ltruster;//
-
+	GameObject Thruster, Clone;// Create trusters outside of constructor to allow scope for TrusterParticles Method
+	Vector3 T_pos;
 	public void SetShip(float _x, float _y, float _xScale, float _yScale, float _speed, Color _color) { //Constructor which inherits values from Main ship method
 		name="Ship";
 		xPos = _x;
@@ -30,51 +29,50 @@ public class Ship : Main {
 		Gun.transform.parent = transform; //Makes LTruster a child to Ship
 
 		//Create Left Thruster of Ship
-		Ltruster = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		Ltruster.name = "Ltruster";
+		Thruster = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		Thruster.name = "Thruster";
 		Vector3 Thruster_scale = new Vector3 (xScale * 0.3f, yScale * 0.5f, 0.1f);//Scale for both thruster Left & Right
-		Vector3 TL_pos = new Vector3 (transform.position.x-xScale/2, transform.position.y-yScale/2, 0.1f);
-		Ltruster.transform.position = TL_pos;
-		Ltruster.transform.localScale = Thruster_scale;
-		Ltruster.transform.parent = transform; //Makes LTruster a child to Ship
+		T_pos = new Vector3 (transform.position.x-xScale/2, transform.position.y-yScale/2, 0.1f);
+		Thruster.transform.position = T_pos;
+		Thruster.transform.localScale = Thruster_scale;
+		Thruster.transform.parent = transform; //Makes LTruster a child to Ship
 
-		//Create Right Thruster of Ship
-		Rtruster = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		Rtruster.name = "Rtruster";
+
+		Clone = Instantiate(Thruster, T_pos,  transform.rotation) as GameObject;
 		Vector3 TR_pos = new Vector3 (transform.position.x+xScale/2, transform.position.y-yScale/2, 0.1f);
-		Rtruster.transform.position = TR_pos;
-		Rtruster.transform.localScale =Thruster_scale;
-		Rtruster.transform.parent = transform; //Makes RTruster a child to Ship
+		TR_pos = new Vector3 (transform.position.x+xScale/2, transform.position.y-yScale/2, 1f);
+		Clone.transform.position = TR_pos;
+		Clone.transform.parent = transform; //Makes LTruster a child to Ship
+
+
 	}
 
 
-	 IEnumerator ThrusterParticles(float time){
-		//Right Thruster Particles
+
+	 IEnumerator ThrusterParticles(float time, GameObject _T){
+		//Right Thruster Particles 
 		while(gameObject) {
-		if (Rtruster != null || Ltruster != null) {
-			GameObject RT_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
-			GameObject LT_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
-			RT_Parts.name = "SParts";
-			LT_Parts.name = "SParts";
+		if (Thruster != null) {
+			GameObject T_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
+			T_Parts.name = "SParts";
 			Vector3 Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0); //Spawns Parts from left(xPos - xScale / 2) to right (xPos + xScale / 2) of ship going downwards
-			RT_Parts.AddComponent<Particles> ().SetupParticle (Rtruster.transform.position.x, Rtruster.transform.position.y, 0.06f, 0.06f, 0.08f, Direction, Color.white, 1f);
-			RT_Parts.transform.position=new Vector3(Rtruster.transform.position.x, Rtruster.transform.position.y, 0.1f);
-			//Left Thruster Particles
 			//Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0);
-			LT_Parts.AddComponent<Particles> ().SetupParticle (Ltruster.transform.position.x, Rtruster.transform.position.y, 0.06f, 0.06f, 0.08f, Direction, Color.white, 1f);
-			LT_Parts.transform.position=new Vector3(Ltruster.transform.position.x, Ltruster.transform.position.y, 0.1f);
+			T_Parts.AddComponent<Particles> ().SetupParticle (_T.transform.position.x, _T.transform.position.y, 0.06f, 0.06f, 0.08f, Direction, Color.white, 1f);
+			T_Parts.transform.position=new Vector3(_T.transform.position.x, _T.transform.position.y, 0.1f);
 			if(ParticleManager){
-				LT_Parts.transform.parent = ParticleManager.transform;
-				RT_Parts.transform.parent = ParticleManager.transform;
+				T_Parts.transform.parent = ParticleManager.transform;
 				}
 			}
 			yield return new WaitForSeconds(time);
 		}
 	}
+
+
+
 	void Start ()
 	{
-		StartCoroutine(ThrusterParticles(0.03f));
-
+		StartCoroutine(ThrusterParticles(0.03f, Thruster));
+		StartCoroutine(ThrusterParticles(0.03f, Clone));
 	}
 
 	float lerpTime = 5f;//
@@ -106,6 +104,7 @@ public class Ship : Main {
 		}
 		if (ship == null) {
 			gameObject.transform.Translate (transform.up * speed/2);//called on GameOver
+
 		}
 
 		//

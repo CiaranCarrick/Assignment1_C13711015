@@ -23,6 +23,7 @@ public class Main : MonoBehaviour {
 	public Color color;//
 	public int Health;//
 	public bool alive, gameover;
+	public GameObject _Target; //ship referance
 
 	public float Enemyrotatespeed=40f;// Speed of lock on enemy rotation
 	public float Zangle;//For Enemies
@@ -36,6 +37,7 @@ public class Main : MonoBehaviour {
 	public int ScreenHeight = 20;
 
 	protected bool debugmode =false;
+
 
 	void Player(){
 
@@ -140,7 +142,7 @@ public class Main : MonoBehaviour {
 			background.name = "BackGround";// Texture Name
 			background.transform.position = new Vector3 (0f,5f, 5f);
 			background.GetComponent<Renderer> ().material.mainTextureScale = new Vector2 (1, 1);//Controls tiling on tecture
-			background.transform.localScale = new Vector3 (16f, 30f, 0f);
+			background.transform.localScale = new Vector3 (16f+Screen.width/100, 30f, 0f);
 			background.GetComponent<Renderer> ().material.shader = Shader.Find ("Unlit/Texture");// Removes light effect on texture"Assets/StarSkyBox"
 			}
 
@@ -181,7 +183,7 @@ public class Main : MonoBehaviour {
 	
 	void Respawn(Enemies _Tar){
 		if (ship != null) {
-			print ("Yes Respawn ");
+			//print ("Yes Respawn ");
 			_Tar.SetEnemies (0, 0, 1, 1, 0.1f, 1, Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, pointsvalue
 		} 
 	}
@@ -201,7 +203,10 @@ public class Main : MonoBehaviour {
 			EnemiesList.Remove(gameObject); //Remove enemy Gameobject from List, also avoids missingexception
 			Destroy(enemy.gameObject);
 		}
-		Leveltime = 50; 
+		Leveltime = 50;//temp code
+		Decreasebar.size = 100;//
+		Decreasebar.Scaler = (Mathf.Round(Decreasebar.size/Leveltime));//100/30==3.33333(rounded=)30f//
+
 		if (Level!=6)
 			Level++;
 		if(Level==5){
@@ -227,7 +232,6 @@ public class Main : MonoBehaviour {
 	
 	public void GameOver(){
 		ship = null;
-
 	}
 	
 	
@@ -249,38 +253,39 @@ public class Main : MonoBehaviour {
 		score += NewScore;
 	}
 	void Start () {
+		Screen.SetResolution (480, 700, false, 60);
 		//SET AUDIO
-		bulletsound = gameObject.AddComponent<AudioSource> ();//Adding AudioSource Components
-		bulletsound.volume = 0.05f;
-		explosionsound = gameObject.AddComponent<AudioSource> ();//
-		explosionsound.volume = 0.1f;
-		bulletaudioclip = (AudioClip)Resources.Load ("Sounds/Shoot1");// Loading the tracks from Resources
-		explosionaudioclip = (AudioClip)Resources.Load ("Sounds/Explosion4");//
-		bulletsound.clip = bulletaudioclip; //Assigning the bullet clips to the AudioSource Components
-		explosionsound.clip = explosionaudioclip;//
-		//
-		StarManager = new GameObject ();// Contains all stars in a scene
-		StarManager.name="Stars";
-		ParticleManager = new GameObject ();// Contains all particles in a scene
-		ParticleManager.name="Particles";
-	    EnemyManager=new GameObject ();// Contains all enemies in a scene
-		EnemyManager.name = "EM";
-		mycooldown = 15;//Default bullet speed fire every 0.25 seconds
-		EnemySpawnTime = 4.00f;
-		Leveltime = 3;
-		Level = 4;
-		score = 0;
-		Background ();
-		Player ();
-		LoadShip (30);
-		CreateStars(10); //set _starCount amount here
-		ScoreM ();
-		InvokeRepeating ("CreateEnemies", 1f, EnemySpawnTime);
+			bulletsound = gameObject.AddComponent<AudioSource> ();//Adding AudioSource Components
+			bulletsound.volume = 0.05f;
+			explosionsound = gameObject.AddComponent<AudioSource> ();//
+			explosionsound.volume = 0.1f;
+			bulletaudioclip = (AudioClip)Resources.Load ("Sounds/Shoot1");// Loading the tracks from Resources
+			explosionaudioclip = (AudioClip)Resources.Load ("Sounds/Explosion4");//
+			bulletsound.clip = bulletaudioclip; //Assigning the bullet clips to the AudioSource Components
+			explosionsound.clip = explosionaudioclip;//
+			Background ();
+			StarManager = new GameObject ();// Contains all stars in a scene
+			StarManager.name = "Stars";
+			ParticleManager = new GameObject ();// Contains all particles in a scene
+			ParticleManager.name = "Particles";
+			EnemyManager = new GameObject ();// Contains all enemies in a scene
+			EnemyManager.name = "EM";
+			mycooldown = 15;//Default bullet speed fire every 0.25 seconds
+			EnemySpawnTime = 4.00f;
+			Leveltime = 30;
+			Level = 1;
+			score = 0;
+			Player ();
+			LoadShip (30);
+			CreateStars (10); //set _starCount amount here
+			ScoreM ();
+			InvokeRepeating ("CreateEnemies", 1f, EnemySpawnTime);
+
 	}//End Start
 	
 
-	void Update () {
-
+	protected void Update () {
+		//CreateEnemies ();
 		if (ship) //Ship must exist or not be null for bullets to be fired
 		{
 			if (cooldown>0)
