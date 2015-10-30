@@ -4,6 +4,7 @@ using System.Collections;
 public class UI: Main{
 	Main main;
 	float deltaTime=0.0f;
+	float bartrans=0.0f;
 	GameObject Bar;
 	void Start(){
 		GameObject M = GameObject.Find("Main");
@@ -13,6 +14,8 @@ public class UI: Main{
 	void UIBar(){
 		Bar = GameObject.CreatePrimitive (PrimitiveType.Quad);//assign Ship gameobject with a Cube
 		Bar.GetComponent<MeshCollider> ().enabled = false;
+		float bartrans = Bar.GetComponent<Renderer> ().material.color.a;
+		bartrans = 0.5f;
 		Bar.name = "Timer";
 		if (debugmode == false) {
 			Bar.AddComponent<Decreasebar> ();
@@ -29,7 +32,7 @@ public class UI: Main{
 	void OnGUI(){
 		if(debugmode)
 		GUI.Label (new Rect (Screen.width/2-50, 45, 100, 50), "DEBUG MODE");
-		GUI.Label (new Rect (Screen.width - 40, Screen.height- 15, Screen.width, Screen.height), "ver.1.9");
+		GUI.Label (new Rect (Screen.width - 50, Screen.height- 15, Screen.width, Screen.height), "ver.1.9.1");
 		GUI.color = new Color (1, 1, 1, 0.8f);//80% Opacity
 		GUI.Label (new Rect (5, 5, 100, 50), "Score: " + score.ToString("000000"));
 		GUI.Label (new Rect (5, 25, 100, 50), "Time: " + main.Leveltime.ToString ("f1"));

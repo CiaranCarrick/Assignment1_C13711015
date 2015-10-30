@@ -29,9 +29,8 @@ public class Particles : Main {
 
 	// Use this for initialization
 	void Start () {
-		if (gameObject.activeInHierarchy) {
-			Invoke ("DestroyParticles", lifespan);
-		}
+		Invoke ("DestroyParticles", lifespan);
+
 	}
 	
 	// Update is called once per frame

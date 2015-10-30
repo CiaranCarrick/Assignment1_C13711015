@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Bonus : MonoBehaviour {
 
+
 	public float twinkle;
 	public int rateofchange;
 	public bool Countup;
@@ -43,6 +44,7 @@ public class Bonus : MonoBehaviour {
 			float distance = (this.transform.position - Main.ship.transform.position).magnitude;//creates a float which stores position between A & B
 			if (distance <= 0.5f) {
 				main.ChangeScore(50); //Increase score for pick up
+				main.pickupsound.Play();
 				Destroy(gameObject);
 				if (main.mycooldown==3)
 					return;
@@ -56,6 +58,7 @@ public class Bonus : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+
 		GameObject M = GameObject.Find("Main");
 		main = M.GetComponent<Main> ();
 		twinkle = 0.2f;

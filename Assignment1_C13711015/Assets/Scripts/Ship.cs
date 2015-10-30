@@ -51,28 +51,29 @@ public class Ship : Main {
 
 	 IEnumerator ThrusterParticles(float time, GameObject _T){
 		//Right Thruster Particles 
-		while(gameObject) {
-		if (Thruster != null) {
-			GameObject T_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
-			T_Parts.name = "SParts";
-			Vector3 Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0); //Spawns Parts from left(xPos - xScale / 2) to right (xPos + xScale / 2) of ship going downwards
-			//Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0);
-			T_Parts.AddComponent<Particles> ().SetupParticle (_T.transform.position.x, _T.transform.position.y, 0.06f, 0.06f, 0.08f, Direction, Color.white, 1f);
-			T_Parts.transform.position=new Vector3(_T.transform.position.x, _T.transform.position.y, 0.1f);
-			if(ParticleManager){
-				T_Parts.transform.parent = ParticleManager.transform;
+			while (gameObject) {
+				if (Thruster != null) {
+					GameObject T_Parts = GameObject.CreatePrimitive (PrimitiveType.Quad);
+					T_Parts.name = "SParts";
+					Vector3 Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0); //Spawns Parts from left(xPos - xScale / 2) to right (xPos + xScale / 2) of ship going downwards
+					//Direction = new Vector3 (Random.Range (xPos - xScale / 2, xPos + xScale / 2), -1f, 0);
+					T_Parts.AddComponent<Particles> ().SetupParticle (_T.transform.position.x, _T.transform.position.y, 0.06f, 0.06f, 0.08f, Direction, Color.white, 1f);
+					T_Parts.transform.position = new Vector3 (_T.transform.position.x, _T.transform.position.y, 0.1f);
+					if (ParticleManager) {
+						T_Parts.transform.parent = ParticleManager.transform;
+					}
 				}
+				yield return new WaitForSeconds (time);
 			}
-			yield return new WaitForSeconds(time);
-		}
+		
 	}
 
 
 
 	void Start ()
 	{
-		StartCoroutine(ThrusterParticles(0.03f, Thruster));
-		StartCoroutine(ThrusterParticles(0.03f, Clone));
+		StartCoroutine(ThrusterParticles(0.04f, Thruster));
+		StartCoroutine(ThrusterParticles(0.04f, Clone));
 	}
 
 	float lerpTime = 5f;//

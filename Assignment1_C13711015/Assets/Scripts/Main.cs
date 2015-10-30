@@ -7,9 +7,13 @@ public class Main : MonoBehaviour {
 	public static int enemycount;
 	public static List <GameObject> bullets;
 	public static AudioSource bulletsound;
+	public AudioSource pickupsound;
 	public static AudioSource explosionsound; //Accessed from ShipShoot
 	AudioClip bulletaudioclip;
 	AudioClip explosionaudioclip;
+	AudioClip pickupaudioclip;
+
+
 
 	GameObject background; //2d Background image
 
@@ -22,7 +26,7 @@ public class Main : MonoBehaviour {
 	public float xPos,yPos,xScale,yScale,speed;//these will be used to contain values for each methods constructory
 	public Color color;//
 	public int Health;//
-	public bool alive, gameover;
+	public bool alive;
 	public GameObject _Target; //ship referance
 
 	public float Enemyrotatespeed=40f;// Speed of lock on enemy rotation
@@ -166,6 +170,7 @@ public class Main : MonoBehaviour {
 			Vector3 Direction = new Vector3 (Random.Range (-1f, 1f), Random.Range (-1f, 1f), 0); //Random directions for particles
 			party.SetupParticle (pos.x, pos.y, Random.Range (0.05f, 0.1f), Random.Range (0.05f, 0.1f), _spd, Direction, _col, 3);
 			particle.transform.parent=ParticleManager.transform;
+			
 		}
 	}
 
@@ -259,10 +264,15 @@ public class Main : MonoBehaviour {
 			bulletsound.volume = 0.05f;
 			explosionsound = gameObject.AddComponent<AudioSource> ();//
 			explosionsound.volume = 0.1f;
+			pickupsound= gameObject.AddComponent<AudioSource> ();//
+			pickupsound.volume = 0.07f;
+			pickupaudioclip = (AudioClip)Resources.Load ("Sounds/Pick up");// Loading the tracks from Resources
 			bulletaudioclip = (AudioClip)Resources.Load ("Sounds/Shoot1");// Loading the tracks from Resources
 			explosionaudioclip = (AudioClip)Resources.Load ("Sounds/Explosion4");//
 			bulletsound.clip = bulletaudioclip; //Assigning the bullet clips to the AudioSource Components
 			explosionsound.clip = explosionaudioclip;//
+			pickupsound.clip = pickupaudioclip;//
+
 			Background ();
 			StarManager = new GameObject ();// Contains all stars in a scene
 			StarManager.name = "Stars";
@@ -273,13 +283,13 @@ public class Main : MonoBehaviour {
 			mycooldown = 15;//Default bullet speed fire every 0.25 seconds
 			EnemySpawnTime = 4.00f;
 			Leveltime = 30;
-			Level = 1;
+			Level =1;
 			score = 0;
 			Player ();
 			LoadShip (30);
 			CreateStars (10); //set _starCount amount here
 			ScoreM ();
-			InvokeRepeating ("CreateEnemies", 1f, EnemySpawnTime);
+			InvokeRepeating ("CreateEnemies", 3f, EnemySpawnTime);
 
 	}//End Start
 	
