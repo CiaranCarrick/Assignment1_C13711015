@@ -72,8 +72,8 @@ public class Ship : Main {
 
 	void Start ()
 	{
-		StartCoroutine(ThrusterParticles(0.04f, Thruster));
-		StartCoroutine(ThrusterParticles(0.04f, Clone));
+		StartCoroutine(ThrusterParticles(0.08f, Thruster));
+		StartCoroutine(ThrusterParticles(0.08f, Clone));
 	}
 
 	float lerpTime = 5f;//

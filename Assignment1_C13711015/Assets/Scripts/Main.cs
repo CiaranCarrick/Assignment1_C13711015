@@ -23,7 +23,7 @@ public class Main : MonoBehaviour {
 
 	private float EnemySpawnTime; // How long between each spawn.
 
-	public float xPos,yPos,xScale,yScale,speed;//these will be used to contain values for each methods constructory
+	public float xPos,yPos,xScale,yScale,speed, minspeed, maxspeed;//these will be used to contain values for each methods constructory
 	public Color color;//
 	public int Health;//
 	public bool alive;
@@ -56,7 +56,7 @@ public class Main : MonoBehaviour {
 	
 	
 	void CreateEnemies(){
-		for (int i=1; i<=Random.Range(1, Level); i++) {
+		for (int i=1; i<=1; i++) {
 			GameObject enemy = GameObject.CreatePrimitive (PrimitiveType.Quad);
 			enemy.AddComponent<Enemies> ();
 			//enemy.AddComponent<AudioSource>().clip=explosionaudioclip;
@@ -126,13 +126,14 @@ public class Main : MonoBehaviour {
 			}
 	}//End CreateBullets
 	
-	void CreateStars(int _starCount){ //Takes in starCount from field above
+	void CreateStars(int _starCount, float _xScale, float _yScale, float _speed, float _min, float _max, bool _scale){ //Takes in starCount from field above
 		for (int i =1; i<=_starCount; i++) {
 			GameObject stars=GameObject.CreatePrimitive(PrimitiveType.Quad);
 			stars.GetComponent<Collider>().enabled = false; 
 			stars.AddComponent<Stars>();
 			Stars sstars=stars.GetComponent<Stars>();
-			sstars.SetStars(0, 0, 0.018f, 1.0f,Random.Range(-20f, -50f));
+			_speed=Random.Range(_min, _max);
+			sstars.SetStars(0, 0, _xScale, _yScale, _speed, _min, _max, _scale);
 			stars.transform.parent=StarManager.transform;
 		}
 	}//End CreateStars
@@ -287,9 +288,10 @@ public class Main : MonoBehaviour {
 			score = 0;
 			Player ();
 			LoadShip (30);
-			CreateStars (10); //set _starCount amount here
+			CreateStars (5,0.018f, 1.0f, 0f, -20, -50, true); //set _starCount amount here
+			CreateStars (20, 0.05f, 0.02f,0, -1, -2, false);//Background stars, false means they will not change scale when they reset 
 			ScoreM ();
-			InvokeRepeating ("CreateEnemies", 3f, EnemySpawnTime);
+			InvokeRepeating ("CreateEnemies", 1f, EnemySpawnTime);
 
 	}//End Start
 	
