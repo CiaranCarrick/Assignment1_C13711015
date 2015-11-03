@@ -47,9 +47,12 @@ public class Bonus : MonoBehaviour {
 		if (Main.ship != null) {
 			float distance = (this.transform.position - Main.ship.transform.position).magnitude;//creates a float which stores position between A & B
 			if (distance <= 0.5f) {
-				if(main.cooldown>3){
+				if(main.mycooldown>3){
 				main.Message("-Cooldown", transform.position);
 				}
+				else
+				main.Message("+50", transform.position);
+
 				main.ChangeScore(50); //Increase score for pick up
 				main.pickupsound.Play();
 				Destroy(gameObject);

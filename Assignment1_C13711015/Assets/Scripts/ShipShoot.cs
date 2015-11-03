@@ -58,6 +58,7 @@ public class ShipShoot : Main {
 					//Score if killed
 					if(enemy.Health==0){
 						enemy.rend.material.color=enemy.color;//set referance back to original colour so check below for enemytype[1] works
+						Message("+"+enemy.pointvalue, enemy.transform.position);
 						ChangeScore(enemy.pointvalue);
 						enemy.alive=false;
 						//parts.transform.parent = null;//Breaks particles away from Enemy

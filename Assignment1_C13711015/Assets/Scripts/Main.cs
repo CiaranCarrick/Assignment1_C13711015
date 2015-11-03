@@ -187,7 +187,6 @@ public class Main : MonoBehaviour {
 		if (Health > 0) {
 			return;
 		} else
-			Message("+10", _Tar.transform.position);
 			explosionsound.Play ();
 			_Tar.GetComponent<Renderer> ().enabled = false;
 			EnemiesList.Remove(_Tar.gameObject); //Remove enemy Gameobject from List, also avoids missingexception
@@ -254,7 +253,6 @@ public class Main : MonoBehaviour {
 			if(gameObject.GetComponent<Enemies>().alive==false){
 				Respawn(_tar);
 				_tar.Resetpos ();
-
 			}
 			else{
 				_tar.Resetpos();
@@ -271,8 +269,9 @@ public class Main : MonoBehaviour {
 		GameObject GUIPopup = new GameObject ();
 		GUIPopup.AddComponent<GUIT> ();
 		GUIT G = GUIPopup.GetComponent<GUIT> ();
-		G.SetText (_text, _trans, new Color (1, 1, 1, 1));
+		G.SetText (_text, _trans);
 		Destroy (GUIPopup.gameObject, 2f);
+		GUIPopup.transform.parent = ParticleManager.transform;
 	}
 
 	void Start () {
@@ -298,10 +297,10 @@ public class Main : MonoBehaviour {
 			ParticleManager.name = "Particles";
 			EnemyManager = new GameObject ();// Contains all enemies in a scene
 			EnemyManager.name = "EM";
-			mycooldown = 3;//Default bullet speed fire every 0.25 seconds
+			mycooldown = 15;//Default bullet speed fire every 0.25 seconds
 			EnemySpawnTime = 4.00f;
 			Leveltime = 30;
-			Level =2;
+			Level =1;
 			score = 0;
 			Player ();
 			LoadShip (30);
