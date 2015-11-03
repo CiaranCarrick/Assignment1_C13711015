@@ -3,14 +3,12 @@ using System.Collections;
 
 public class Decreasebar : Main {
 	public static float size,Scaler;
-
+	public float width;
+	Main main;
 	public void SetUpBar(){
-
 
 	}
 
-	public float width;
-	Main main;
 	void Start(){
 		GameObject M = GameObject.Find ("Main");
 		main=M.GetComponent<Main>();
@@ -23,10 +21,9 @@ public class Decreasebar : Main {
 			size -= Time.deltaTime * Scaler;
 			Decrease (this.transform);
 		}
-
 	}
 	
-	public void Decrease(Transform _b){
+	void Decrease(Transform _b){
 			Vector3 pos = _b.transform.position;
 			Vector3 scale = _b.transform.localScale;
 			scale.x = (width / 100) * size;

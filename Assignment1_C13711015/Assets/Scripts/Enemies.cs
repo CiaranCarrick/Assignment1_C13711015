@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Enemies : Main {
@@ -51,7 +51,6 @@ public class Enemies : Main {
 		GetComponent<Renderer> ().enabled = true;//Reset renderer after object is Respawned in Main class
 		
 		Resetpos ();
-		
 		LoadParticles(transform.position,color, speed,5,transform);//Once everything is set, create particles for each ship
 		
 		Vector3 scale = new Vector3(xScale, yScale, 0.1f);
@@ -66,7 +65,7 @@ public class Enemies : Main {
 		transform.eulerAngles = new Vector3 (0, 0, 180f);
 		transform.position = pos;
 	}
-	
+
 	public void Findplayer() {
 		if (alive==true) {
 			if (ship != null) {//Only excute when ship exists
