@@ -15,7 +15,11 @@ public class Enemies : Main {
 		Level = _level;
 		alive = _alive;
 		pointvalue = _pointvalue;
-		
+		//Apply Texture
+		Material mat;
+		mat = Resources.Load("Materials/EnemyShip") as Material;
+		gameObject.GetComponent<Renderer>().material=mat;
+		//
 		if (Level <= 1 ) {
 			GetComponent<Renderer>().material.color = EnemyType [0];//Spawn only reds in level 1
 		}

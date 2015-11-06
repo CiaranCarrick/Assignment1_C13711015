@@ -13,7 +13,7 @@ public class Main : MonoBehaviour {
 	AudioClip explosionaudioclip;
 	AudioClip pickupaudioclip;
 
-	public GUIT G;
+	GUIT G;
 
 	GameObject background; //2d Background image
 
@@ -44,14 +44,13 @@ public class Main : MonoBehaviour {
 	
 
 	void Player(){
-
-		ship = GameObject.CreatePrimitive (PrimitiveType.Quad);//assign Ship gameobject with a Quad
+		ship = new GameObject ();
+		ship.AddComponent<MeshRenderer> ();
 		ship.gameObject.tag="Player"; 
 		ship.AddComponent<Ship> (); //Attach Ship script to ship GameObject
 		//ship.AddComponent<Movement> ();
 		Ship myship = ship.GetComponent<Ship> (); // Create Instance of ship called myship 
-		myship.GetComponent<Ship> ().SetShip (0, -1, 1.0f, 1.0f, 0.5f, new Color (100, 0f, 255f, 1f));
-
+		myship.GetComponent<Ship> ().SetShip (0, -1.5f, 1.0f, 1.0f, 0.5f, new Color (1f, 1f, 1f, 1f));
 	}//End Player
 	
 	
@@ -60,9 +59,10 @@ public class Main : MonoBehaviour {
 			GameObject enemy = GameObject.CreatePrimitive (PrimitiveType.Quad);
 			enemy.AddComponent<Enemies> ();
 			//enemy.AddComponent<AudioSource>().clip=explosionaudioclip;
+
 			Enemies myenemies = enemy.GetComponent<Enemies> (); // Create Instance of Enemies called myenemies
 			myenemies.SetEnemies (0, 0, 1, 1, 0.06f,1,Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, particles
-			enemy.GetComponent<Renderer> ().material.shader = Shader.Find ("Unlit/Color");// Removes light effect on texture"Assets/StarSkyBox"
+			enemy.GetComponent<Renderer> ().material.shader = Shader.Find ("Sprites/Default");// Removes light effect on texture"Assets/StarSkyBox"
 			EnemiesList.Add (enemy);
 			enemy.transform.parent=EnemyManager.transform;
 
@@ -107,7 +107,6 @@ public class Main : MonoBehaviour {
 			mat = Resources.Load("Materials/Bullet") as Material;
 			bullet.AddComponent<ShipShoot> ();//Add script to each bullet
 			bullet.GetComponent<Renderer>().material=mat;
-			mat.SetColor("_TintColor",new Color(255f/255f, 255f/255f, 255f/255f,1));
 			bullet.GetComponent<Renderer> ().material.shader = Shader.Find ("Particles/Additive");// Removes light effect on texture"Assets/StarSkyBox"
 			bullet.SetActive(false);
 			bullets.Add (bullet);//Add gameobject to list
@@ -305,7 +304,7 @@ public class Main : MonoBehaviour {
 			Player ();
 			LoadShip (30);
 			CreateStars (5,0.018f, 1.0f, 0f, -20, -50, true); //set _starCount amount here
-			CreateStars (20, 0.05f, 0.02f,0, -1, -2, false);//Background stars, false means they will not change scale when they reset 
+			CreateStars (100, 0.05f, 0.02f,0, -1, -2, false);//Background stars, false means they will not change scale when they reset 
 			ScoreM ();
 			InvokeRepeating ("CreateEnemies", 0f, EnemySpawnTime);
 

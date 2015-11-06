@@ -6,7 +6,7 @@ public class Bonus : MonoBehaviour {
 	public int rateofchange;
 	public bool Countup;
 	Main main;
-	GUIT G;
+	//GUIT G;
 	
 	void strobe() {//Strobe effect for Bonus
 		transform.localScale = new Vector3 (twinkle, twinkle, 0.1f);
@@ -47,7 +47,7 @@ public class Bonus : MonoBehaviour {
 		if (Main.ship != null) {
 			float distance = (this.transform.position - Main.ship.transform.position).magnitude;//creates a float which stores position between A & B
 			if (distance <= 0.5f) {
-				if(main.mycooldown>3){
+				if(main.mycooldown>5){
 				main.Message("-Cooldown", transform.position);
 				}
 				else
@@ -56,7 +56,7 @@ public class Bonus : MonoBehaviour {
 				main.ChangeScore(50); //Increase score for pick up
 				main.pickupsound.Play();
 				Destroy(gameObject);
-				if (main.mycooldown<=3){
+				if (main.mycooldown<=5){
 					return;
 				}
 				else
@@ -71,7 +71,7 @@ public class Bonus : MonoBehaviour {
 	void Start () {
 		GameObject M = GameObject.Find("Main");
 		main = M.GetComponent<Main> ();
-		G = M.GetComponent<GUIT> ();
+		//G = M.GetComponent<GUIT> ();
 		twinkle = 0.2f;
 	}
 	

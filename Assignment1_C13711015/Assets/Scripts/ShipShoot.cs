@@ -5,6 +5,7 @@ public class ShipShoot : Main {
 	ShipShoot bullet;
 	Vector3 dir;
 	public bool PlayerBullet= false;
+	public Renderer rend;//Refernace to color
 
 	public void SetBullet(float _x, float _y, float _z, float _xScale, float _yScale, float _speed,int _mycooldown, bool _alive, Vector3 _dir, bool _Pbullet) { //Constructor which inherits values from Main ship method
 		xPos = _x;
@@ -18,6 +19,8 @@ public class ShipShoot : Main {
 		dir = _dir;
 		PlayerBullet = _Pbullet;
 
+
+
 		transform.eulerAngles = new Vector3 (0, 0, _z);//Rotate bullets to ships gameobject rotation its being shot from
 
 		Vector3 pos = new Vector3 (xPos, yPos, 0.1f);
@@ -29,6 +32,7 @@ public class ShipShoot : Main {
 		
 	// Use this for initialization
 	void Start () {
+		rend = GetComponent<Renderer> ();
 		bullet = gameObject.GetComponent<ShipShoot> ();
 	}
 
@@ -84,13 +88,16 @@ public class ShipShoot : Main {
 		if (!PlayerBullet && ship != null) {//Enemie bullet collision
 			_Target = ship.gameObject;
 			float distance = (ship.transform.position - this.transform.position).magnitude;
-			if (distance <= 0.5f && bullet.alive) {// Checks to avoid missingexception
+			//print(distance);
+			rend.material.SetColor("_TintColor",new Color(166f/255f, 255f/255f, 0f/255f,1));//Greenish goo
+			if (distance <= 0.55f && bullet.alive) {// Checks to avoid missingexception
 				bullet.gameObject.SetActive (false);
 				bullet.alive = false;
 				killplayer ();
 			}
 		}
 		if(PlayerBullet){//If Ship shoots the bullet
+			rend.material.SetColor("_TintColor",new Color(255f/255f, 255f/255f, 255f/255f,1));// Blue
 			if (mycooldown <= 5) {
 				transform.position += transform.right * Mathf.Sin (Time.time * 10) * 0.02f; //Awesome sine wave
 			}
