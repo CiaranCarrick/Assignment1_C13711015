@@ -40,7 +40,7 @@ public class ShipShoot : Main {
 	// Update is called once per frame
 	void Update () {
 		transform.Translate (dir* speed);
-		if ((transform.position.y) >= ScreenHeight || transform.position.y <= -ScreenHeight / 2) {//When bullets Y position is greater than ScreensHeight
+		if ((transform.position.y) >= ScreenHeight-2 || transform.position.y <= -ScreenHeight/2-yScale) {//When bullets Y position is greater than ScreensHeight
 			gameObject.SetActive (false);//Disable gameObject aka bullet
 		}
 		//COLLISIONS
@@ -71,6 +71,7 @@ public class ShipShoot : Main {
 						parts.SetActive(true);
 						//enemy.CreateParticles(transform.position, enemycolour, enemy.speed, 20); // Feed in particles spawn area, color and take in speed for effects
 						EnemiesList.Remove(_Target.gameObject); //Remove enemy Gameobject from List, also avoids missingexception
+
 						if(enemy.rend.material.color==EnemyType[1]){
 							int spawn=Random.Range(0,100);
 							if(spawn<=75){

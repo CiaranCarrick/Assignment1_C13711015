@@ -6,11 +6,13 @@ public class UI: Main{
 	float deltaTime=0.0f;//FPS
 	float bartrans=0.0f;
 	GameObject Bar;
+
 	void Start(){
 		GameObject M = GameObject.Find("Main");
 		main = M.GetComponent<Main> ();
 		UIBar ();
 	}
+
 	void UIBar(){
 		Bar = GameObject.CreatePrimitive (PrimitiveType.Quad);//assign Ship gameobject with a Cube
 		Bar.GetComponent<MeshCollider> ().enabled = false;
@@ -22,7 +24,7 @@ public class UI: Main{
 		if (debugmode == false) {
 			Bar.AddComponent<Decreasebar> ();
 		}
-		Vector3 pos = new Vector3 ((-6.5f), 18.57f, 0.1f);
+		Vector3 pos = new Vector3 ((-9.5f), 18.0f, 0.1f);
 		Bar.transform.position = pos;
 		Vector3 scale = new Vector3 (2.5f, 0.5f, 0.1f);
 		Bar.transform.localScale = scale;

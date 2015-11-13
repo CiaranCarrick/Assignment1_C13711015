@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class Bonus : MonoBehaviour {
+	public Transform mytransform;
 	public float twinkle;
 	public int rateofchange;
 	public bool Countup;
@@ -44,14 +45,17 @@ public class Bonus : MonoBehaviour {
 	
 	public void Move() {
 		transform.Translate (Vector3.down * 0.05f);
-		if (Main.ship != null) {
+		if (Main.ship != null&&this.gameObject!=null) {
 			float distance = (this.transform.position - Main.ship.transform.position).magnitude;//creates a float which stores position between A & B
+			if (distance <= 1.5f){
+				mytransform.position = Vector3.MoveTowards(transform.position, Main.ship.transform.position, 4f*Time.deltaTime);
+			}
 			if (distance <= 0.5f) {
 				if(main.mycooldown>5){
-				main.Message("-Cooldown", transform.position);
+				main.Message("-Cooldown", mytransform.position);
 				}
 				else
-				main.Message("+50", transform.position);
+				main.Message("+50", mytransform.position);
 
 				main.ChangeScore(50); //Increase score for pick up
 				main.pickupsound.Play();
@@ -69,6 +73,7 @@ public class Bonus : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		mytransform = transform;
 		GameObject M = GameObject.Find("Main");
 		main = M.GetComponent<Main> ();
 		//G = M.GetComponent<GUIT> ();
@@ -77,11 +82,10 @@ public class Bonus : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (transform.position.y <= -5f) {// Resets position once it reachs -1
+		if (transform.position.y <= -Main.ScreenHeight/2-2) {// Resets position once it reachs -1
 			Destroy(this.gameObject);
 		}
 		Move ();
 		strobe ();
-		
 	}
 }

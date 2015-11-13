@@ -17,7 +17,7 @@ public class Decreasebar : Main {
 		Scaler = (Mathf.Round(size/main.Leveltime));//100/30==3.33333(rounded=)30f
 	}
 	void Update(){
-		if (size >= 1f && ship) {
+		if (size >= 1f && ship && Gamestart==true) {
 			size -= Time.deltaTime * Scaler;
 			Decrease (this.transform);
 		}

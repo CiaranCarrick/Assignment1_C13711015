@@ -29,9 +29,13 @@ public class Enemies : Main {
 		if (Level > 2) {
 			GetComponent<Renderer>().material.color = EnemyType [Random.Range (0, EnemyType.Length)];// red green and yellow
 		}
-		
+
+
+
+
 		//ENEMY TYPES
-		
+		//Start position
+
 		//Regular
 		if (GetComponent<Renderer>().material.color == EnemyType [0]) {
 			name="Enemy_R";//Uses default varibles supplied in Createnemy in main
@@ -51,10 +55,12 @@ public class Enemies : Main {
 			color=EnemyType[2];
 			pointvalue=25;
 			speed = Random.Range (0.08f, 0.14f);
+//			Vector3 ypos = new Vector3 (-8,ScreenHeight/2, 0);// so to prevent spawning of screen the equation is My spawn areaa(pos)-half of the enemies widthx-xscale/2, then add its size again to keep it going 1 left and push it 1 right
+//			transform.eulerAngles = new Vector3 (0, 0, 270f);
+//			transform.position = ypos;
 		}
 		GetComponent<Renderer> ().enabled = true;//Reset renderer after object is Respawned in Main class
 		
-		Resetpos ();
 		LoadParticles(transform.position,color, speed,5,transform);//Once everything is set, create particles for each ship
 		
 		Vector3 scale = new Vector3(xScale, yScale, 0.1f);
@@ -69,6 +75,21 @@ public class Enemies : Main {
 		transform.eulerAngles = new Vector3 (0, 0, 180f);
 		transform.position = pos;
 	}
+
+	public IEnumerator SpawnWave(){
+		float timer=0;
+		timer += Time.deltaTime;
+		for (int i=1; i<=5; i++) {
+			GameObject enemy = GameObject.CreatePrimitive (PrimitiveType.Quad);
+			enemy.AddComponent<Enemies> ();
+			//enemy.AddComponent<AudioSource>().clip=explosionaudioclip;
+			Enemies myenemies = enemy.GetComponent<Enemies> (); // Create Instance of Enemies called myenemies
+			myenemies.SetEnemies (0, 0, 1, 1, 0.06f, 1, Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, particles
+			enemy.GetComponent<Renderer> ().material.shader = Shader.Find ("Sprites/Default");// Removes light effect on texture"Assets/StarSkyBox"
+			EnemiesList.Add (enemy);
+			yield return new WaitForSeconds(0.5f);
+		}
+	}//End CreateEnemies
 
 	public void Findplayer() {
 		if (alive==true) {
@@ -88,7 +109,7 @@ public class Enemies : Main {
 						killplayer();//Activate GameOver method
 				}
 				//HOMING ENEMIES
-				if (GetComponent<Renderer>().material.color == EnemyType [2] && this.gameObject.transform.position.y >= yScale/2){//If enemy is of type yellow, call lock on method and target enemy if its centre position is equal to half the players height
+				if (GetComponent<Renderer>().material.color == EnemyType [2] && this.gameObject.transform.position.y >= _Target.transform.position.y){//If enemy is of type yellow, call lock on method and target enemy if its centre position is equal to half the players height
 						Vector3 Dir = _Target.transform.position - transform.position;// Get a direction Vector from Target to enemy
 						Dir.Normalize ();// Normalize it so that it's a unit direction Vector, gives it a size of 1
 						
@@ -110,6 +131,11 @@ public class Enemies : Main {
 	void Start () {
 		rend = GetComponent<Renderer> ();
 		InvokeRepeating ("shoot", Random.Range(1,3), 8);
+		xPos = Random.Range (ScreenWidthLeft+xScale, ScreenWidthRight);//Spawns objects in range of -8, 8 as ints
+		yPos = ScreenHeight + yScale;// Spawns above range of bullets
+		Vector3 pos = new Vector3 (Mathf.Round((xPos - xScale / 2)*10)/10, yPos, 0);// so to prevent spawning of screen the equation is My spawn areaa(pos)-half of the enemies widthx-xscale/2, then add its size again to keep it going 1 left and push it 1 right
+		transform.eulerAngles = new Vector3 (0, 0, 180f);
+		transform.position = pos;
 	}
 	void shoot(){
 		if(color==EnemyType[0] && alive==true && ship)
@@ -130,8 +156,9 @@ public class Enemies : Main {
 			Damageindicater();
 		}
 
-		transform.Translate (Vector3.up * speed);
-		ResetEnemies (gameObject.GetComponent<Enemies>());
+		transform.Translate (Vector3.up * speed);//Translate is less intense on the CPU, prevents object from colliding via translate movement
+
+		ResetEnemies (GetComponent<Enemies>());
 		//Enemy Updates
 		if (debugmode!=true)
 			Findplayer (); //Find distance between player and enemy
