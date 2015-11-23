@@ -7,6 +7,7 @@ public class Bonus : MonoBehaviour {
 	public int rateofchange;
 	public bool Countup;
 	Main main;
+	GameObject shield;
 	//GUIT G;
 	
 	void strobe() {//Strobe effect for Bonus
@@ -50,8 +51,17 @@ public class Bonus : MonoBehaviour {
 			if (distance <= 1.5f){
 				mytransform.position = Vector3.MoveTowards(transform.position, Main.ship.transform.position, 4f*Time.deltaTime);
 			}
+
 			if (distance <= 0.5f) {
-				if(main.mycooldown>5){
+				if(GetComponent<Renderer>().material.color!=Color.white){
+					GiveShield(new Vector3(2.2f, 2.2f, 3.5f), new Vector3(0,-20,0));
+					main.ChangeScore(10); //Increase score for pick up
+					main.pickupsound.Play();
+					main.Message("Shield", mytransform.position);
+					Destroy(gameObject);
+					return;
+				}
+				if(main.mycooldown>5 ){
 				main.Message("-Cooldown", mytransform.position);
 				}
 				else
@@ -69,10 +79,23 @@ public class Bonus : MonoBehaviour {
 		}
 	}//end Move
 
+	void GiveShield(Vector3 _size, Vector3 _pos){
+		shield=GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		shield.GetComponent<Renderer> ().material.shader = Shader.Find ("Legacy Shaders/Transparent/Diffuse");// Allows to change opacity with SetColour function
+		shield.GetComponent<Renderer> ().material.SetColor ("_Color", new Color(0f/255f,213f/255f,255f/255f,70/255f));
+		shield.name = "Shield";
+		shield.transform.localScale=new Vector3(_size.x, _size.y, _size.z);
+		shield.transform.position=new Vector3(_pos.x, _pos.y, _pos.z);
+		shield.AddComponent<Rotatearound>();
+	}
+
 	
 	
 	// Use this for initialization
 	void Start () {
+		if (Random.Range (0, 5) > 2 && GameObject.Find("Ship/Shield") == null) {
+			GetComponent<Renderer> ().material.color = new Color (0f / 255f, 213f / 255f, 255f / 255f, 70 / 255f);
+		}
 		mytransform = transform;
 		GameObject M = GameObject.Find("Main");
 		main = M.GetComponent<Main> ();

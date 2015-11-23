@@ -8,7 +8,6 @@ public class Decreasebar : Main {
 	public void SetUpBar(){
 
 	}
-
 	void Start(){
 		GameObject M = GameObject.Find ("Main");
 		main=M.GetComponent<Main>();
@@ -17,7 +16,7 @@ public class Decreasebar : Main {
 		Scaler = (Mathf.Round(size/main.Leveltime));//100/30==3.33333(rounded=)30f
 	}
 	void Update(){
-		if (size >= 1f && ship && Gamestart==true) {
+		if (size >= 0f && ship && Gamestart==true) {
 			size -= Time.deltaTime * Scaler;
 			Decrease (this.transform);
 		}
@@ -30,6 +29,5 @@ public class Decreasebar : Main {
 			pos.x = _b.transform.position.x - ((_b.transform.localScale.x - scale.x) / 2);
 			transform.position = pos;
 			transform.localScale = scale;
-
 	}
 }

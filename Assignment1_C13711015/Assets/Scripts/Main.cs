@@ -12,7 +12,6 @@ public class Main : MonoBehaviour {
 	AudioClip bulletaudioclip;
 	AudioClip explosionaudioclip;
 	AudioClip pickupaudioclip;
-
 	GUIT G; //instance of GUIT class
 
 	GameObject background; //2d Background image
@@ -41,7 +40,7 @@ public class Main : MonoBehaviour {
 	public static int ScreenHeight = 25;
 
 	protected bool debugmode =false;
-	public static float Targetposition=-10f;
+	public Vector3 Targetposition =new Vector3(0,-10f,0);
 
 	public static bool Gamestart;
 
@@ -56,21 +55,20 @@ public class Main : MonoBehaviour {
 	}//End Player
 	
 	
-	protected void CreateEnemies(){
+	void CreateEnemies(){
 		for (int i=1; i<=1; i++) {
 			GameObject enemy = GameObject.CreatePrimitive (PrimitiveType.Quad);
 			enemy.AddComponent<Enemies> ();
 			//enemy.AddComponent<AudioSource>().clip=explosionaudioclip;
+			
 			Enemies myenemies = enemy.GetComponent<Enemies> (); // Create Instance of Enemies called myenemies
 			myenemies.SetEnemies (0, 0, 1, 1, 0.06f,1,Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, particles
 			enemy.GetComponent<Renderer> ().material.shader = Shader.Find ("Sprites/Default");// Removes light effect on texture"Assets/StarSkyBox"
 			EnemiesList.Add (enemy);
 			enemy.transform.parent=EnemyManager.transform;
-			//StartCoroutine (myenemies.SpawnWave());
-
+			
 		}
 	}//End CreateEnemies
-
 	
 
 	//This method can only be accessed by inheriting classes, Used in derived class constructors to spawn particles
@@ -158,6 +156,7 @@ public class Main : MonoBehaviour {
 			background.transform.position = new Vector3 (0f,5f, 5f);
 			background.GetComponent<Renderer> ().material.mainTextureScale = new Vector2 (1, 1);//Controls tiling on tecture
 			background.transform.localScale = new Vector3 (19f+Screen.width/100, 36f, 0f);
+			background.isStatic=true;
 			background.GetComponent<Renderer> ().material.shader = Shader.Find ("Unlit/Texture");// Removes light effect on texture"Assets/StarSkyBox"
 			}
 
@@ -229,6 +228,7 @@ public class Main : MonoBehaviour {
 			background.GetComponent<Renderer>().material.mainTexture = Resources.Load<Texture2D> ("Textures/Level_final"); //Apply texture to level 5 from resource folder
 		} 
 		if (Level == 6) {
+			CancelInvoke("CreateEnemies"); //When player is hit by enemie bullet, stop spawning
 			GameOver();
 			InvokeRepeating("Partytime", 1f, 1f); //Call after final level is complete
 		}
@@ -239,12 +239,16 @@ public class Main : MonoBehaviour {
 		Vector3 Party = new Vector3 (Random.Range (ScreenWidthLeft, ScreenWidthRight), Random.Range (-ScreenHeight, ScreenHeight), 0.1f);
 		CreateParticles(Party, new Color(Random.Range(0.1f, 1f),Random.Range(0.1f, 1f),Random.Range(0.1f, 1f),0), 0.1f, 30); // Shoot randomly coloured particles around
 	}
-	public void killplayer(){
-		CreateParticles (transform.position, ship.GetComponent<Renderer>().material.color, 0.08f, 100);
+	public void killplayer(GameObject _T){
+		if (_T != ship) {
+			CreateParticles (_T.transform.position, _T.GetComponent<Renderer> ().material.color, 0.08f, 5);
+		} else
+			CreateParticles (_T.transform.position, _T.GetComponent<Renderer> ().material.color, 0.08f, 100);
 		explosionsound.Play ();
-		Destroy (ship.gameObject);
-
-		CancelInvoke("CreateEnemies");
+		Destroy (_T.gameObject);
+		if (ship == null) {
+			CancelInvoke ("CreateEnemies");
+		}
 	}
 	
 	public void GameOver(){
@@ -256,16 +260,14 @@ public class Main : MonoBehaviour {
 	
 	
 	public void ResetEnemies(Enemies _tar){
-		if (transform.position.y <= -ScreenHeight/2-2) {// Resets position once it reachs -1
-			if(gameObject.GetComponent<Enemies>().alive==false){
-				Respawn(_tar);
-				_tar.Resetpos ();
-			}
-			else{
-				_tar.Resetpos();
-			}
-
+		if(_tar.alive==false){
+			Respawn(_tar);
+			_tar.Resetpos ();
 		}
+		else{
+			_tar.Resetpos();
+		}
+		
 	}
 	public void ChangeScore (int NewScore) // Add Score Method
 	{	
@@ -284,6 +286,7 @@ public class Main : MonoBehaviour {
 
 
 	void Start () {
+		//CreateBonus (new Vector3 (0, -5, 0));
 		Screen.SetResolution (480, 700, false, 60);
 		//SET AUDIO
 		Gamestart = false;
@@ -299,7 +302,6 @@ public class Main : MonoBehaviour {
 			bulletsound.clip = bulletaudioclip; //Assigning the bullet clips to the AudioSource Components
 			explosionsound.clip = explosionaudioclip;//
 			pickupsound.clip = pickupaudioclip;//
-
 			Background ();
 			StarManager = new GameObject ();// Contains all stars in a scene
 			StarManager.name = "Stars";
@@ -309,8 +311,8 @@ public class Main : MonoBehaviour {
 			EnemyManager.name = "EM";
 			mycooldown = 15;//Default bullet speed fire every 0.25 seconds
 			EnemySpawnTime = 4.00f;
-			Leveltime = 10;
-			Level =1;
+			Leveltime = 3;
+			Level =5;
 			score = 0;
 			Player ();
 			LoadShip (30);
@@ -318,7 +320,6 @@ public class Main : MonoBehaviour {
 			CreateStars (100, 0.05f, 0.02f,0, -1, -2, false);//Background stars, false means they will not change scale when they reset 
 			ScoreM ();
 			InvokeRepeating ("CreateEnemies", 0f, EnemySpawnTime);
-
 
 	}//End Start
 	
@@ -334,10 +335,12 @@ public class Main : MonoBehaviour {
 			}
 			if (cooldown ==0)
 			{
+				if(ship.transform.position.y==Targetposition.y){
 				FireBullets(ship.transform, 0.4f, true);
 				cooldown=mycooldown;
 				if (mycooldown<=3)
 					mycooldown=3; //max speed of bullets after all bonus' are picked up
+				}
 			}
 			if (debugmode!=true) {
 				if (Leveltime <= 0)
@@ -345,7 +348,7 @@ public class Main : MonoBehaviour {
 					NextLevel();
 				} 
 				
-				else if(ship.transform.position.y==Targetposition)
+				else if(ship.transform.position.y==Targetposition.y)
 				{
 					Gamestart=true;
 					Leveltime -= Time.deltaTime;
@@ -353,7 +356,7 @@ public class Main : MonoBehaviour {
 			}//end Debug
 		}//end ship
 		else
-			CancelInvoke("CreateEnemies");
+			CancelInvoke("CreateEnemies"); //When player is hit by enemie bullet, stop spawning
 
 	}//End Update
 

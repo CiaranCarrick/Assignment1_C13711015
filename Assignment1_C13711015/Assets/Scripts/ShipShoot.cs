@@ -6,6 +6,7 @@ public class ShipShoot : Main {
 	Vector3 dir;
 	public bool PlayerBullet= false;
 	public Renderer rend;//Refernace to color
+	GameObject c;
 
 	public void SetBullet(float _x, float _y, float _z, float _xScale, float _yScale, float _speed,int _mycooldown, bool _alive, Vector3 _dir, bool _Pbullet) { //Constructor which inherits values from Main ship method
 		xPos = _x;
@@ -19,8 +20,6 @@ public class ShipShoot : Main {
 		dir = _dir;
 		PlayerBullet = _Pbullet;
 
-
-
 		transform.eulerAngles = new Vector3 (0, 0, _z);//Rotate bullets to ships gameobject rotation its being shot from
 
 		Vector3 pos = new Vector3 (xPos, yPos, 0.1f);
@@ -29,7 +28,6 @@ public class ShipShoot : Main {
 		transform.localScale = scale;
 
 	}
-		
 	// Use this for initialization
 	void Start () {
 		rend = GetComponent<Renderer> ();
@@ -40,7 +38,7 @@ public class ShipShoot : Main {
 	// Update is called once per frame
 	void Update () {
 		transform.Translate (dir* speed);
-		if ((transform.position.y) >= ScreenHeight-2 || transform.position.y <= -ScreenHeight/2-yScale) {//When bullets Y position is greater than ScreensHeight
+		if ((transform.position.y) >= ScreenHeight-2 || transform.position.y <= (-ScreenHeight/2)-yScale*2) {//When bullets Y position is greater than ScreensHeight
 			gameObject.SetActive (false);//Disable gameObject aka bullet
 		}
 		//COLLISIONS
@@ -88,13 +86,21 @@ public class ShipShoot : Main {
 		}
 		if (!PlayerBullet && ship != null) {//Enemie bullet collision
 			_Target = ship.gameObject;
-			float distance = (ship.transform.position - this.transform.position).magnitude;
+			float distance = (_Target.transform.position - this.transform.position).magnitude;
 			//print(distance);
 			rend.material.SetColor("_TintColor",new Color(166f/255f, 255f/255f, 0f/255f,1));//Greenish goo
 			if (distance <= 0.55f && bullet.alive) {// Checks to avoid missingexception
+				c = GameObject.Find ("Ship/Shield");
+				if(c){
+					bullet.gameObject.SetActive (false);
+					bullet.alive = false;
+					killplayer(c);
+					return;
+				}
+				else
 				bullet.gameObject.SetActive (false);
 				bullet.alive = false;
-				killplayer ();
+				killplayer (_Target);
 			}
 		}
 		if(PlayerBullet){//If Ship shoots the bullet
