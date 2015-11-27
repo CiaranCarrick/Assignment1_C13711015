@@ -9,7 +9,7 @@ public class Collisions : Main {
 		bullet = gameObject.GetComponent<ShipShoot> ();
 	}
 	// Update is called once per frame
-	void Update () {
+	 void Update () {
 		//COLLISIONS
 		for(int i=0; i < EnemiesList.Count; i++){
 			target = EnemiesList[i].gameObject;

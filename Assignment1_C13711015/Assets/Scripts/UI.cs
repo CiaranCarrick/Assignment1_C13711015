@@ -5,18 +5,18 @@ public class UI: Main{
 	Main main;
 	float deltaTime=0.0f;//FPS
 	GameObject Bar;
-
+	
 	void Start(){
 		GameObject M = GameObject.Find("Main");
 		main = M.GetComponent<Main> ();
 		UIBar ();
 	}
-
+	
 	void UIBar(){
 		Bar = GameObject.CreatePrimitive (PrimitiveType.Quad);//assign Ship gameobject with a Cube
 		Bar.GetComponent<MeshCollider> ().enabled = false;
 		Bar.GetComponent<Renderer> ().material.shader = Shader.Find ("UI/Default");// Allows to change opacity with SetColour function
-
+		
 		Bar.GetComponent<Renderer> ().material.SetColor ("_Color", new Color(1,1,1, 0.55f));
 		Bar.name = "Timer";
 		if (debugmode == false) {
@@ -30,15 +30,15 @@ public class UI: Main{
 	}
 	void Update(){
 	}
-
+	
 	void OnGUI(){
 		if(debugmode)
-		GUI.Label (new Rect (Screen.width/2-50, 45, 100, 50), "DEBUG MODE");
-		GUI.Label (new Rect (Screen.width - 50, Screen.height- 15, Screen.width, Screen.height), "ver.2.0.1");
+			GUI.Label (new Rect (Screen.width/2-50, 45, 100, 50), "DEBUG MODE");
+		//GUI.Label (new Rect (Screen.width - 50, Screen.height- 15, Screen.width, Screen.height), "ver.2.0.3");
 		GUI.color = new Color (1, 1, 1, 0.9f);//80% Opacity
 		GUI.Label (new Rect (5, 5, 100, 50), "Score: " + score.ToString("000000"));
 		GUI.Label (new Rect (5, 25, 100, 50), "Time: " + main.Leveltime.ToString ("f1"));
-
+		
 		GUI.Label (new Rect (5, 45, 100, 50), "Level: " + main.Level);
 		if (debugmode==true) {
 			//FPS

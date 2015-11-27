@@ -7,7 +7,7 @@ public class ShipShoot : Main {
 	public bool PlayerBullet= false;
 	public Renderer rend;//Refernace to color
 	GameObject c;
-
+	
 	public void SetBullet(float _x, float _y, float _z, float _xScale, float _yScale, float _speed,int _mycooldown, bool _alive, Vector3 _dir, bool _Pbullet) { //Constructor which inherits values from Main ship method
 		xPos = _x;
 		yPos = _y;
@@ -19,22 +19,22 @@ public class ShipShoot : Main {
 		alive = _alive;
 		dir = _dir;
 		PlayerBullet = _Pbullet;
-
+		
 		transform.eulerAngles = new Vector3 (0, 0, _z);//Rotate bullets to ships gameobject rotation its being shot from
-
+		
 		Vector3 pos = new Vector3 (xPos, yPos, 0.1f);
 		transform.position = pos;
 		Vector3 scale = new Vector3 (xScale, yScale, 0.1f);
 		transform.localScale = scale;
-
+		
 	}
 	// Use this for initialization
 	void Start () {
 		rend = GetComponent<Renderer> ();
 		bullet = gameObject.GetComponent<ShipShoot> ();
 	}
-
-
+	
+	
 	// Update is called once per frame
 	void Update () {
 		transform.Translate (dir* speed);
@@ -52,24 +52,26 @@ public class ShipShoot : Main {
 					if(distance <= 0.5f && bullet.alive){// Checks to avoid missingexception
 						gameObject.SetActive(false);//Disable gameObject aka bullet
 						bullet.alive=false;//Disable the bullet
-						enemy.rend.material.color=Color.red;//
+						enemy.Enemyrend.material.color=Color.red;//
 						enemy.SubtractLife(_Target);//access enemy referance and use Subtract method to take HP away from _Target
-
+						
 					}
-
+					
 					//Score if killed
 					if(enemy.Health==0){
 						enemy.rend.material.color=enemy.color;//set referance back to original colour so check below for enemytype[1] works
 						Message("+"+enemy.pointvalue, enemy.transform.position);
 						ChangeScore(enemy.pointvalue);
 						enemy.alive=false;
+						enemy.Enemy.GetComponent<MeshRenderer>().enabled=false;
+
 						//parts.transform.parent = null;//Breaks particles away from Enemy
 						GameObject parts= _Target.transform.FindChild("p").gameObject; 
 						parts.transform.parent=ParticleManager.transform;
 						parts.SetActive(true);
 						//enemy.CreateParticles(transform.position, enemycolour, enemy.speed, 20); // Feed in particles spawn area, color and take in speed for effects
 						EnemiesList.Remove(_Target.gameObject); //Remove enemy Gameobject from List, also avoids missingexception
-
+						
 						if(enemy.rend.material.color==EnemyType[1]){
 							int spawn=Random.Range(0,100);
 							if(spawn<=75){
@@ -98,7 +100,7 @@ public class ShipShoot : Main {
 					return;
 				}
 				else
-				bullet.gameObject.SetActive (false);
+					bullet.gameObject.SetActive (false);
 				bullet.alive = false;
 				killplayer (_Target);
 			}

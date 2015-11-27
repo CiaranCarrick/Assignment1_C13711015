@@ -15,14 +15,12 @@ public class Main : MonoBehaviour {
 	GUIT G; //instance of GUIT class
 
 	GameObject background; //2d Background image
-
 	protected static GameObject ParticleManager;// Used to clean up Hierarchy
-	protected GameObject EnemyManager;//
-	protected GameObject StarManager;//
+	protected GameObject EnemyManager, StarManager;
 
 	private float EnemySpawnTime; // How long between each spawn.
 
-	public float xPos,yPos,xScale,yScale,speed, minspeed, maxspeed;//these will be used to contain values for each methods constructory
+	protected float xPos,yPos,xScale,yScale,speed, minspeed, maxspeed;//these will be used to contain values for each methods constructory
 	public Color color;//
 	public int Health;//
 	public bool alive;
@@ -42,7 +40,7 @@ public class Main : MonoBehaviour {
 	protected bool debugmode =false;
 	public Vector3 Targetposition =new Vector3(0,-10f,0);
 
-	public static bool Gamestart;
+	public bool Gamestart;
 
 	void Player(){
 		ship = new GameObject ();
@@ -57,16 +55,15 @@ public class Main : MonoBehaviour {
 	
 	void CreateEnemies(){
 		for (int i=1; i<=1; i++) {
-			GameObject enemy = GameObject.CreatePrimitive (PrimitiveType.Quad);
+			GameObject enemy =new GameObject();
+			enemy.AddComponent<MeshRenderer>();
 			enemy.AddComponent<Enemies> ();
 			//enemy.AddComponent<AudioSource>().clip=explosionaudioclip;
-			
 			Enemies myenemies = enemy.GetComponent<Enemies> (); // Create Instance of Enemies called myenemies
 			myenemies.SetEnemies (0, 0, 1, 1, 0.06f,1,Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, particles
 			enemy.GetComponent<Renderer> ().material.shader = Shader.Find ("Sprites/Default");// Removes light effect on texture"Assets/StarSkyBox"
-			EnemiesList.Add (enemy);
+			//EnemiesList.Add (enemy);
 			enemy.transform.parent=EnemyManager.transform;
-			
 		}
 	}//End CreateEnemies
 	
@@ -134,7 +131,7 @@ public class Main : MonoBehaviour {
 			}
 	}//End CreateBullets
 	
-	void CreateStars(int _starCount, float _xScale, float _yScale, float _speed, float _min, float _max, bool _scale){ //Takes in starCount from field above
+	protected void CreateStars(int _starCount, float _xScale, float _yScale, float _speed, float _min, float _max, bool _scale){ //Takes in starCount from field above
 		for (int i =1; i<=_starCount; i++) {
 			GameObject stars=GameObject.CreatePrimitive(PrimitiveType.Quad);
 			stars.GetComponent<Collider>().enabled = false; 
@@ -142,6 +139,7 @@ public class Main : MonoBehaviour {
 			Stars sstars=stars.GetComponent<Stars>();
 			_speed=Random.Range(_min, _max);
 			sstars.SetStars(0, 0, _xScale, _yScale, _speed, _min, _max, _scale);
+			if(StarManager)
 			stars.transform.parent=StarManager.transform;
 		}
 	}//End CreateStars
@@ -151,7 +149,7 @@ public class Main : MonoBehaviour {
 		background = GameObject.CreatePrimitive (PrimitiveType.Quad); //Flat plane
 		if (background != null) {
 			//background.AddComponent<BackgroundScroll> ();
-			background.GetComponent<Renderer> ().material.mainTexture = Resources.Load<Texture2D> ("Textures/Level_1");//Quad Texture
+			background.GetComponent<Renderer> ().material.mainTexture = Resources.Load<Texture2D> ("isi_textures/Level_1");//Quad Texture
 			background.name = "BackGround";// Texture Name
 			background.transform.position = new Vector3 (0f,5f, 5f);
 			background.GetComponent<Renderer> ().material.mainTextureScale = new Vector2 (1, 1);//Controls tiling on tecture
@@ -218,18 +216,29 @@ public class Main : MonoBehaviour {
 			EnemiesList.Remove(gameObject); //Remove enemy Gameobject from List, also avoids missingexception
 			Destroy(enemy.gameObject);
 		}
+		foreach (GameObject bullet in bullets)//Clear Screen of enemies
+		{
+			bullet.SetActive(false);
+		}
+		if (Level < 5) {
+			ship.transform.position = new Vector3 (0, -15f, 0);
+		}
+		//Gamestart = false;
 		Leveltime = 50;//temp code
 		Decreasebar.size = 100;//
 		Decreasebar.Scaler = (Mathf.Round(Decreasebar.size/Leveltime));//100/30==3.33333(rounded=)30f//
 
 		if (Level!=6)
 			Level++;
-		if(Level==5){
+		if(Level>=3){
+			background.GetComponent<Renderer>().material.mainTexture = Resources.Load<Texture2D> ("isi_Textures/Level_3"); //Apply texture to level 5 from resource folder
+		} 
+		if(Level>=5){
 			background.GetComponent<Renderer>().material.mainTexture = Resources.Load<Texture2D> ("Textures/Level_final"); //Apply texture to level 5 from resource folder
 		} 
 		if (Level == 6) {
-			CancelInvoke("CreateEnemies"); //When player is hit by enemie bullet, stop spawning
 			GameOver();
+			Leveltime = 0;
 			InvokeRepeating("Partytime", 1f, 1f); //Call after final level is complete
 		}
 	}//end NextLevel
@@ -241,7 +250,7 @@ public class Main : MonoBehaviour {
 	}
 	public void killplayer(GameObject _T){
 		if (_T != ship) {
-			CreateParticles (_T.transform.position, _T.GetComponent<Renderer> ().material.color, 0.08f, 5);
+			CreateParticles (_T.transform.position, _T.GetComponent<Renderer> ().material.color, 0.08f, 10);
 		} else
 			CreateParticles (_T.transform.position, _T.GetComponent<Renderer> ().material.color, 0.08f, 100);
 		explosionsound.Play ();
@@ -254,6 +263,8 @@ public class Main : MonoBehaviour {
 	public void GameOver(){
 		if (Gamestart == true) {
 			Gamestart = false;
+			CancelInvoke("CreateEnemies"); //When player is hit by enemie bullet, stop spawning
+
 		}
 		ship = null;
 	}
@@ -286,7 +297,8 @@ public class Main : MonoBehaviour {
 
 
 	void Start () {
-		//CreateBonus (new Vector3 (0, -5, 0));
+		//CreateBonus (new Vector3 (0, -7, 0));
+
 		Screen.SetResolution (480, 700, false, 60);
 		//SET AUDIO
 		Gamestart = false;
@@ -309,10 +321,10 @@ public class Main : MonoBehaviour {
 			ParticleManager.name = "Particles";
 			EnemyManager = new GameObject ();// Contains all enemies in a scene
 			EnemyManager.name = "EM";
-			mycooldown = 15;//Default bullet speed fire every 0.25 seconds
+			mycooldown = 19;//Default bullet speed fire every 0.25 seconds
 			EnemySpawnTime = 4.00f;
-			Leveltime = 3;
-			Level =5;
+			Leveltime = 30;
+			Level = 1;
 			score = 0;
 			Player ();
 			LoadShip (30);
@@ -324,7 +336,7 @@ public class Main : MonoBehaviour {
 	}//End Start
 	
 
-	protected void Update () {
+	void Update () {
 		//print (Gamestart);
 		//CreateEnemies ();
 		if (ship) //Ship must exist or not be null for bullets to be fired
@@ -348,11 +360,13 @@ public class Main : MonoBehaviour {
 					NextLevel();
 				} 
 				
-				else if(ship.transform.position.y==Targetposition.y)
+				else if(ship.transform.position.y==Targetposition.y && ship!=null)
 				{
 					Gamestart=true;
 					Leveltime -= Time.deltaTime;
 				}
+				else
+					Gamestart=false;
 			}//end Debug
 		}//end ship
 		else

@@ -33,7 +33,7 @@ public class GUIT : MonoBehaviour{
 		if (GUIPopup) {
 			if (Alpha.a > 0) {
 				GUIPopup.transform.position = Camera.main.WorldToViewportPoint (transform.position + WorldOffset) + ScreenOffset;//Change GUI's viewpoint coordinates to world. add Worldoffset aka where GUI spawns
-				WorldOffset += Vector3.up * Time.deltaTime/1f;
+				WorldOffset += Vector3.up * (Time.deltaTime*duration);
 				Alpha.a -= Time.deltaTime / duration;
 				guitext.material.SetColor ("_Color", Alpha);
 			}

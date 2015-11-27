@@ -34,7 +34,7 @@ public class Particles : Main {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	 void Update () {
 		transform.Translate (Direction * speed);
 	}
 }

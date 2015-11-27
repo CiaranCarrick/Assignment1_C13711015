@@ -5,8 +5,9 @@ public class Enemies : Main {
 	public int pointvalue;
 	float timer;
 	//public float Zangle;
-	public Renderer rend;//Refernace to color
+	public Renderer rend, Enemyrend;//Refernace to color
 	Enemies Myenemy;
+	public GameObject enemymodel, Enemy;
 	public void SetEnemies(float _x, float _y, float _xScale, float _yScale, float _speed, int _health, int _level, bool _alive, int _pointvalue) {
 		xPos = _x;
 		yPos = _y;
@@ -18,9 +19,10 @@ public class Enemies : Main {
 		alive = _alive;
 		pointvalue = _pointvalue;
 		//Apply Texture
-		Material mat;
-		mat = Resources.Load("Materials/EnemyShip") as Material;
-		gameObject.GetComponent<Renderer>().material=mat;
+//		Material mat;
+//		mat = Resources.Load("Materials/EnemyShip") as Material;
+//		gameObject.GetComponent<Renderer>().material=mat;
+		enemymodel=Resources.Load<GameObject>("isi_textures/Enemy");
 		//
 		if (Level <= 1 ) {
 			GetComponent<Renderer>().material.color = EnemyType [0];//Spawn only reds in level 1
@@ -44,14 +46,14 @@ public class Enemies : Main {
 			name="Enemy_G";
 			Health = 3;
 			color=EnemyType[1];
-			pointvalue=25;
+			pointvalue=15;
 			speed= Random.Range (0.08f, 0.08f);
 		}
 		//Lock on
 		if (GetComponent<Renderer>().material.color == EnemyType [2]) {
 			name="Enemy_Y";
 			color=EnemyType[2];
-			pointvalue=25;
+			pointvalue=20;
 			speed = Random.Range (0.12f, 0.15f);
 		}
 		Resetpos ();
@@ -63,13 +65,17 @@ public class Enemies : Main {
 	}
 	
 	public void Resetpos(){
+
 		xPos = Random.Range (ScreenWidthLeft+xScale, ScreenWidthRight);//Spawns objects in range of -8, 8 as ints
 		yPos = ScreenHeight + yScale;// Spawns above range of bullets
 		Vector3 pos = new Vector3 (Mathf.Round((xPos - xScale / 2)*10)/10, yPos, 0);// so to prevent spawning of screen the equation is My spawn areaa(pos)-half of the enemies widthx-xscale/2, then add its size again to keep it going 1 left and push it 1 right
 		transform.eulerAngles = new Vector3 (0, 0, 180f);
 		transform.position = pos;
-		if(rend)
-		rend.enabled = true;//Reset renderer after object is Respawned in Main class
+		if (Enemy) {
+			Enemyrend.material.SetColor ("_Color", color);
+		}
+		if(Enemy&&Enemy.GetComponent<MeshRenderer> ().enabled ==false)
+			Enemyrend.enabled = true;//Reset renderer after object is Respawned in Main class
 
 	}
 	
@@ -116,6 +122,10 @@ public class Enemies : Main {
 	void Start () {
 		Myenemy = GetComponent<Enemies> ();
 		rend = gameObject.GetComponent<Renderer> ();
+		Enemy=Instantiate(enemymodel, transform.position, Quaternion.Euler(90,0,0))as GameObject;
+		Enemyrend = Enemy.GetComponent<Renderer> ();
+		Enemyrend.material.SetColor ("_Color", color);
+		Enemy.transform.parent = transform;
 		InvokeRepeating ("shoot", Random.Range(1,3), 8);
 	}
 	void shoot(){
@@ -126,14 +136,14 @@ public class Enemies : Main {
 	void Damageindicater(){
 		timer += Time.deltaTime;
 		if(timer>=0.05f){
-			rend.material.color = color;
+			Enemyrend.material.color = color;
 			timer=0;
 		}
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		if (rend.material.color == Color.red) {
+	 void Update () {
+		if (Enemyrend.material.color == Color.red) {
 			Damageindicater();
 		}
 		if (transform.position.y <= (-ScreenHeight / 2) - yScale * 2) {// Resets position once it reachs -1
