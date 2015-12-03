@@ -2,11 +2,15 @@
 using System.Collections;
 
 public class UI: Main{
+	GUIStyle guistyle = new GUIStyle();
+
 	Main main;
 	float deltaTime=0.0f;//FPS
 	GameObject Bar;
-	
+	string guitext;
+
 	void Start(){
+		guitext = "game over";
 		GameObject M = GameObject.Find("Main");
 		main = M.GetComponent<Main> ();
 		UIBar ();
@@ -22,7 +26,7 @@ public class UI: Main{
 		if (debugmode == false) {
 			Bar.AddComponent<Decreasebar> ();
 		}
-		Vector3 pos = new Vector3 ((-9.5f),18.0f, 0.1f);
+		Vector3 pos = new Vector3 ((-9.75f),18.25f, 0.1f);
 		Bar.transform.position = pos;
 		Vector3 scale = new Vector3 (2.5f, 0.5f, 0.1f);
 		Bar.transform.localScale = scale;
@@ -32,9 +36,10 @@ public class UI: Main{
 	}
 	
 	void OnGUI(){
+		guistyle.font = Resources.Load ("Fonts/Spacefont") as Font; guistyle.normal.textColor = Color.white; guistyle.fontSize = 18;
 		if(debugmode)
 			GUI.Label (new Rect (Screen.width/2-50, 45, 100, 50), "DEBUG MODE");
-		//GUI.Label (new Rect (Screen.width - 50, Screen.height- 15, Screen.width, Screen.height), "ver.2.0.3");
+		//GUI.Label (new Rect (Screen.width - 50, Screen.height- 15, Screen.width, Screen.height), "ver.2.0.5");
 		GUI.color = new Color (1, 1, 1, 0.9f);//80% Opacity
 		GUI.Label (new Rect (5, 5, 100, 50), "Score: " + score.ToString("000000"));
 		GUI.Label (new Rect (5, 25, 100, 50), "Time: " + main.Leveltime.ToString ("f1"));
@@ -49,8 +54,11 @@ public class UI: Main{
 			//
 		}
 		if (ship == null) {
-			GUI.Label (new Rect (Screen.width/2-25 ,250, 80, 30), "Game Over");
-			GUI.Label (new Rect (Screen.width/2-25, 300, 100, 50), "Score: " + score);
+
+			GUI.Label (new Rect (Screen.width/2-50 ,250, 80, 30), guitext, guistyle);
+			GUI.Label (new Rect (Screen.width/2-25 ,300, 100, 50), "Score:");
+			GUI.Label (new Rect (Screen.width/2+15 ,300, 100, 50), "" + score);
+
 			if (GUI.Button (new Rect (Screen.width/2-30, 350, 80, 30), "Retry?")) {
 				Application.LoadLevel (0);
 				EnemiesList.Clear();

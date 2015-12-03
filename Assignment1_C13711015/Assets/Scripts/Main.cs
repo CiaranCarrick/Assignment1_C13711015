@@ -15,6 +15,8 @@ public class Main : MonoBehaviour {
 	GUIT G; //instance of GUIT class
 
 	GameObject background; //2d Background image
+	public GameObject Button;
+
 	protected static GameObject ParticleManager;// Used to clean up Hierarchy
 	protected GameObject EnemyManager, StarManager;
 
@@ -37,7 +39,7 @@ public class Main : MonoBehaviour {
 	public static int ScreenWidthRight = 11;
 	public static int ScreenHeight = 25;
 
-	protected bool debugmode =false;
+	public bool debugmode =false;
 	public Vector3 Targetposition =new Vector3(0,-10f,0);
 
 	public bool Gamestart;
@@ -198,7 +200,7 @@ public class Main : MonoBehaviour {
 		if (ship != null) {
 			//print ("Yes Respawn ");
 			_Tar.SetEnemies (0, 0, 1, 1, 0.1f, 1, Level, true, 10);//_x, _y, _xScale, _yScale, _speed,  _color, _health _Level, alive, pointsvalue
-		} 
+		}
 	}
 
 
@@ -209,7 +211,7 @@ public class Main : MonoBehaviour {
 		if (EnemySpawnTime != 1f) {
 			EnemySpawnTime -= 0.25f; //Decrease EnemySpawnTime
 		}
-		InvokeRepeating ("CreateEnemies", 2f, EnemySpawnTime); //Re-intialize Invoke with new EnemySpawnTime value
+		InvokeRepeating ("CreateEnemies", 0f, EnemySpawnTime); //Re-intialize Invoke with new EnemySpawnTime value
 		//end Adjust
 		foreach (GameObject enemy in EnemiesList)//Clear Screen of enemies
 		{
@@ -261,10 +263,14 @@ public class Main : MonoBehaviour {
 	}
 	
 	public void GameOver(){
+		CancelInvoke("CreateEnemies"); //When player is hit by enemie bullet, stop spawning
+		foreach (GameObject enemy in EnemiesList)//Clear Screen of enemies
+		{
+			EnemiesList.Remove(gameObject); //Remove enemy Gameobject from List, also avoids missingexception
+			Destroy(enemy.gameObject);
+		}
 		if (Gamestart == true) {
 			Gamestart = false;
-			CancelInvoke("CreateEnemies"); //When player is hit by enemie bullet, stop spawning
-
 		}
 		ship = null;
 	}
@@ -280,6 +286,7 @@ public class Main : MonoBehaviour {
 		}
 		
 	}
+
 	public void ChangeScore (int NewScore) // Add Score Method
 	{	
 		score += NewScore;
@@ -297,7 +304,10 @@ public class Main : MonoBehaviour {
 
 
 	void Start () {
-		//CreateBonus (new Vector3 (0, -7, 0));
+		if (Button == null) {
+			Button = GameObject.Find ("Toggle");
+		}
+		CreateBonus (new Vector3 (0, 5, 0));//Spawn Shield for beta purposes
 
 		Screen.SetResolution (480, 700, false, 60);
 		//SET AUDIO
@@ -337,7 +347,7 @@ public class Main : MonoBehaviour {
 	
 
 	void Update () {
-		//print (Gamestart);
+
 		//CreateEnemies ();
 		if (ship) //Ship must exist or not be null for bullets to be fired
 		{
@@ -360,13 +370,14 @@ public class Main : MonoBehaviour {
 					NextLevel();
 				} 
 				
-				else if(ship.transform.position.y==Targetposition.y && ship!=null)
+				else if(ship.transform.position.y==Targetposition.y)
 				{
 					Gamestart=true;
 					Leveltime -= Time.deltaTime;
 				}
 				else
 					Gamestart=false;
+
 			}//end Debug
 		}//end ship
 		else

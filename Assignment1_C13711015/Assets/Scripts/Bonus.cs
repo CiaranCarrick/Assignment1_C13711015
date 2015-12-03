@@ -99,6 +99,9 @@ public class Bonus : MonoBehaviour {
 		rend = GetComponent<Renderer> ();
 		//G = M.GetComponent<GUIT> ();
 		twinkle = 0.2f;
+		if (main.Gamestart == false) {//JUST FOR THE BETA DISPLAY
+			GetComponent<Renderer> ().material.color = new Color (0f / 255f, 213f / 255f, 255f / 255f, 70 / 255f);
+		}
 	}
 	
 	// Update is called once per frame

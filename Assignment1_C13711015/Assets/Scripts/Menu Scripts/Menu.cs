@@ -4,10 +4,11 @@ using System.Collections;
 public class Menu : Main {
 	GUIStyle guistyle = new GUIStyle();
 	Stars stars;
+	string Gameversion;
 	// Use this for initialization
 	void Start () {
-		CreateStars (5,0.018f, 1.0f, 0f, -20, -50, true); //set _starCount amount here
-
+		Gameversion = "ver 2.0.5";
+		CreateStars (3,0.018f, 1.0f, 0f, -30, -70, true); //set _starCount amount here
 		Screen.SetResolution (480, 700, false, 60);
 	}
 	
@@ -34,6 +35,6 @@ public class Menu : Main {
 //			return;
 //		}
 //		
-		GUI.Label (new Rect (Screen.width/2+60, Screen.height/2+80, Screen.width, Screen.height), "ver.2.0.3", guistyle);
+		GUI.Label (new Rect (Screen.width/2+70, Screen.height/2+80, Screen.width, Screen.height), Gameversion, guistyle);
 	}//end OnGui
 }

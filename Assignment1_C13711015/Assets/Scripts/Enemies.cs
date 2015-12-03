@@ -1,13 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
-public class Enemies : Main {
+public class Enemies : Ship {
 	public int pointvalue;
-	float timer;
+	private float timer;
 	//public float Zangle;
 	public Renderer rend, Enemyrend;//Refernace to color
-	Enemies Myenemy;
-	public GameObject enemymodel, Enemy;
+	private Enemies Myenemy;
+	public GameObject Enemy;
 	public void SetEnemies(float _x, float _y, float _xScale, float _yScale, float _speed, int _health, int _level, bool _alive, int _pointvalue) {
 		xPos = _x;
 		yPos = _y;
@@ -22,7 +22,7 @@ public class Enemies : Main {
 //		Material mat;
 //		mat = Resources.Load("Materials/EnemyShip") as Material;
 //		gameObject.GetComponent<Renderer>().material=mat;
-		enemymodel=Resources.Load<GameObject>("isi_textures/Enemy");
+		RocketModel=Resources.Load<GameObject>("isi_textures/Enemy");//Using the inherited RocketModel variable from Ship parent class, Assign enemy ship model
 		//
 		if (Level <= 1 ) {
 			GetComponent<Renderer>().material.color = EnemyType [0];//Spawn only reds in level 1
@@ -35,7 +35,6 @@ public class Enemies : Main {
 		}
 		
 		//ENEMY TYPES
-		
 		//Regular
 		if (GetComponent<Renderer>().material.color == EnemyType [0]) {
 			name="Enemy_R";//Uses default varibles supplied in Createnemy in main
@@ -78,7 +77,7 @@ public class Enemies : Main {
 			Enemyrend.enabled = true;//Reset renderer after object is Respawned in Main class
 
 	}
-	
+
 	public void Findplayer() {
 		if (alive==true) {
 			if (ship != null) {//Only excute when ship exists
@@ -122,7 +121,7 @@ public class Enemies : Main {
 	void Start () {
 		Myenemy = GetComponent<Enemies> ();
 		rend = gameObject.GetComponent<Renderer> ();
-		Enemy=Instantiate(enemymodel, transform.position, Quaternion.Euler(90,0,0))as GameObject;
+		Enemy=Instantiate(RocketModel, transform.position, Quaternion.Euler(90,0,0))as GameObject;
 		Enemyrend = Enemy.GetComponent<Renderer> ();
 		Enemyrend.material.SetColor ("_Color", color);
 		Enemy.transform.parent = transform;
@@ -130,13 +129,13 @@ public class Enemies : Main {
 	}
 	void shoot(){
 		if(color==EnemyType[0] && alive==true && ship)
-			FireBullets (this.transform, (speed*Random.Range(1.25f, 2f)), false);
+			FireBullets (this.transform, (speed*Random.Range(1.25f, 2f)), false);//Red enemies fire at the player while they're alive and player is alive
 	}
 	
 	void Damageindicater(){
 		timer += Time.deltaTime;
 		if(timer>=0.05f){
-			Enemyrend.material.color = color;
+			Enemyrend.material.color = color;//Set enemy back to original colour, reset time
 			timer=0;
 		}
 	}
@@ -144,13 +143,12 @@ public class Enemies : Main {
 	// Update is called once per frame
 	 void Update () {
 		if (Enemyrend.material.color == Color.red) {
-			Damageindicater();
+			Damageindicater();//Once shipshoot sets enemy red, fire this script to change back to original colour
 		}
 		if (transform.position.y <= (-ScreenHeight / 2) - yScale * 2) {// Resets position once it reachs -1
 			ResetEnemies (Myenemy);
-
 		}
-		transform.Translate (Vector3.up * speed);
+		transform.Translate (Vector3.up * speed); //Vector.up, Enemies are rotated 180degrees, they're facing the player
 		//Enemy Updates
 		if (debugmode!=true)
 			Findplayer (); //Find distance between player and enemy
